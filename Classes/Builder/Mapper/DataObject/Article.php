@@ -28,7 +28,8 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'status', 'source' => 'publicationStatus'],
         ['property' => 'issues'],
         ['property' => 'sections'],
-        ['property' => 'externalIds']
+        ['property' => 'externalIds'],
+        ['property' => 'license']
     ];
 
     /**
@@ -50,6 +51,9 @@ class Article extends AbstractDataObjectMapper {
             [] : [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
 
         $dataObject->externalIds = self::getExternalIds($dataObject);
+
+        // This is CDL specific
+        $dataObject->license = $dataObject->getLocalizedData('cc_license') ?: null;
 
         return $dataObject;
     }
@@ -118,7 +122,6 @@ class Article extends AbstractDataObjectMapper {
             is_null($dataObject->publishedArticle) ? self::getUnpublishedArticleStatus($dataObject) : 'published';
         return $dataObject;
     }
-
 
     /**
      * @param $status
