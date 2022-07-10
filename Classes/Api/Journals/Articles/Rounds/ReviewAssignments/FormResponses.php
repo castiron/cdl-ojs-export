@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Rounds\ReviewAssignments;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles\Rounds\ReviewAssignments;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
@@ -6,7 +7,8 @@ use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Utility\HTML;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
-class FormResponses extends ApiRoute  {
+class FormResponses extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $reviewAssignmentRepository;
@@ -22,22 +24,25 @@ class FormResponses extends ApiRoute  {
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
-        $reviewAssignments = $this->reviewAssignmentRepository->fetchByArticle($article, (int) $parameters['round']);
+        $reviewAssignments = $this->reviewAssignmentRepository->fetchByArticle($article, (int)$parameters['round']);
         $reviewAssignmentId = $parameters['review_assignment'];
 
         $reviewAssignment = null;
-        foreach($reviewAssignments as $reviewAssignment) {
-            if ((int)$reviewAssignmentId === (int)$reviewAssignment->getId()) break;
+        foreach ($reviewAssignments as $reviewAssignment) {
+            if ((int)$reviewAssignmentId === (int)$reviewAssignment->getId()) {
+                break;
+            }
         }
 
-        if(is_null($reviewAssignment))
+        if (is_null($reviewAssignment)) {
             throw new UnknownDatabaseAccessObjectException("ReviewAssignment $reviewAssignmentId not found");
+        }
 
         $responses = $this->reviewFormResponseRepository->fetchByReview($reviewAssignment);
 
         $responseOutput = [];
         $index = 0;
-        foreach($responses as $formElementId => $responseValue) {
+        foreach ($responses as $formElementId => $responseValue) {
             // TODO: this passing of the index to render a source record key could merit revisiting
             $responseOutput[] = $this->formatResponse($reviewAssignment, $formElementId, $responseValue, $index);
             $index++;
@@ -50,7 +55,8 @@ class FormResponses extends ApiRoute  {
      * @param $responseValue
      * @return object
      */
-    protected function formatResponse($reviewAssignment, $formElementId, $responseData, $index) {
+    protected function formatResponse($reviewAssignment, $formElementId, $responseData, $index)
+    {
         $reviewFormElement = $this->reviewFormElementRepository->fetchOneById($formElementId);
 
         /**
@@ -68,17 +74,17 @@ class FormResponses extends ApiRoute  {
          * that it's a checkbox field type, which allows multiple selections.
          */
         $responseOutputValue = null;
-        if(is_integer($responseData)) {
-            if(array_key_exists($responseData, $responseOrderToContentMap)) {
+        if (is_integer($responseData)) {
+            if (array_key_exists($responseData, $responseOrderToContentMap)) {
                 $responseOutputValue = $responseOrderToContentMap[$responseData];
             }
-        } elseif(is_string($responseData)) {
+        } elseif (is_string($responseData)) {
             $responseOutputValue = HTML::cleanHtml($responseData);
-        } elseif(is_array($responseData)) {
+        } elseif (is_array($responseData)) {
             $responseOutputValue = $responseData;
 
-            foreach($responseData as $k => $v) {
-                if(array_key_exists($v, $responseOrderToContentMap)) {
+            foreach ($responseData as $k => $v) {
+                if (array_key_exists($v, $responseOrderToContentMap)) {
                     $responseOutputValue[$k] = $responseOrderToContentMap[$v];
                 }
             }

@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-class Note extends AbstractDataObjectMapper {
+class Note extends AbstractDataObjectMapper
+{
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'id'],
         ['property' => 'user', 'source' => 'userId', 'sourceRecordKey' => 'user'],

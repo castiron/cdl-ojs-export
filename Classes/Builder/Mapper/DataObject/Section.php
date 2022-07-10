@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-class Section extends AbstractDataObjectMapper {
+class Section extends AbstractDataObjectMapper
+{
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
 
     protected static $mapping = [

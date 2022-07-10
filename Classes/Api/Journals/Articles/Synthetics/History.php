@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Synthetics;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles\Synthetics;
 
 use JournalTransporterPlugin\Api\ApiRoute;
 
-class History extends ApiRoute {
+class History extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
 

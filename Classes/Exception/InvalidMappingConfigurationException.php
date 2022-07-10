@@ -1,3 +1,6 @@
-<?php namespace JournalTransporterPlugin\Exception;
+<?php
+namespace JournalTransporterPlugin\Exception;
 
-class InvalidMappingConfigurationException extends PluginException {}
+class InvalidMappingConfigurationException extends PluginException
+{
+}

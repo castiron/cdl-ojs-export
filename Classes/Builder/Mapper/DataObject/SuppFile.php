@@ -1,3 +1,6 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-class SuppFile extends ArticleFile {}
+class SuppFile extends ArticleFile
+{
+}

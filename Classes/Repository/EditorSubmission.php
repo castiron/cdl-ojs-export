@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 
-class EditorSubmission {
+class EditorSubmission
+{
     use Repository;
 
     /**
@@ -15,7 +17,8 @@ class EditorSubmission {
      * @param null $round
      * @return mixed
      */
-    public function fetchEditorDecisionsByArticle($article, $round = null) {
+    public function fetchEditorDecisionsByArticle($article, $round = null)
+    {
         return $this->getEditorDecisions($article->getId(), $round);
     }
 }

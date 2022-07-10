@@ -1,10 +1,12 @@
-<?php namespace JournalTransporterPlugin\Api\Journals;
+<?php
+namespace JournalTransporterPlugin\Api\Journals;
 
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class Sections extends ApiRoute {
+class Sections extends ApiRoute
+{
     protected $journalRepository;
     protected $sectionRepository;
 
@@ -15,8 +17,12 @@ class Sections extends ApiRoute {
      */
     public function execute($parameters, $arguments)
     {
-        if(@$parameters['section']) {
-            return $this->getSection($parameters['section'], $parameters['journal'], $arguments[ApiRoute::DEBUG_ARGUMENT]);
+        if (@$parameters['section']) {
+            return $this->getSection(
+                $parameters['section'],
+                $parameters['journal'],
+                $arguments[ApiRoute::DEBUG_ARGUMENT]
+            );
         } else {
             return $this->getSections($parameters);
         }
@@ -26,7 +32,9 @@ class Sections extends ApiRoute {
     {
         $journal = $this->journalRepository->fetchOneById($journalId);
         $item = $this->sectionRepository->fetchByIdAndJournal($sectionId, $journal);
-        if($debug) return DataObject::dataObjectToArray($item);
+        if ($debug) {
+            return DataObject::dataObjectToArray($item);
+        }
         return NestedMapper::map($item);
     }
 
@@ -39,8 +47,11 @@ class Sections extends ApiRoute {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $resultSet = $this->sectionRepository->fetchByJournal($journal);
 
-        return array_map(function($item) {
-            return NestedMapper::map($item, 'index');
-        }, $resultSet->toArray());
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item, 'index');
+            },
+            $resultSet->toArray()
+        );
     }
 }

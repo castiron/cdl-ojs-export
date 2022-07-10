@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use Config;
 
-class Issue extends AbstractDataObjectMapper {
+class Issue extends AbstractDataObjectMapper
+{
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
 
     protected static $mapping = [

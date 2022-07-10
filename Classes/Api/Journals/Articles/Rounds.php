@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
@@ -7,7 +8,8 @@ use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 use JournalTransporterPlugin\Exception\UnknownDatabaseAccessObjectException;
 
-class Rounds extends ApiRoute  {
+class Rounds extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $sectionEditorSubmissionRepository;
@@ -26,8 +28,9 @@ class Rounds extends ApiRoute  {
         $round = (int)$parameters['round'];
 
         if ($round) {
-            if ($round < 1 || $round > $numberOfRounds)
+            if ($round < 1 || $round > $numberOfRounds) {
                 throw new UnknownDatabaseAccessObjectException("Round $round doesn't exist");
+            }
             return $this->getRound($article, $round);
         } else {
             return $this->getRounds($article, $numberOfRounds);
@@ -42,7 +45,7 @@ class Rounds extends ApiRoute  {
     protected function getRounds($article, $numberOfRounds)
     {
         $out = [];
-        for($i = 1; $i <= $numberOfRounds; $i++) {
+        for ($i = 1; $i <= $numberOfRounds; $i++) {
             $out[] = (object)['source_record_key' => SourceRecordKey::round($article->getId(), $i)];
         }
         return $out;
@@ -59,14 +62,14 @@ class Rounds extends ApiRoute  {
         // These are ordered ASC by date
         $assignments = $this->editAssignmentRepository->fetchByArticle($article)->toArray();
         $dateUnderway = null;
-        if(count($assignments)) {
+        if (count($assignments)) {
             $dateUnderway = $assignments[0]->getDateUnderway();
         }
 
         return (object)[
             'source_record_key' => SourceRecordKey::round($article->getId(), $round),
             'round' => $round,
-            'date' => Date::formatDateString( $dateUnderway ?: $article->getLastModified())
+            'date' => Date::formatDateString($dateUnderway ?: $article->getLastModified())
         ];
     }
 }

@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
-class EditorDecision extends AbstractDataObjectMapper {
+class EditorDecision extends AbstractDataObjectMapper
+{
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'editDecisionId'],
         ['property' => 'editor'],
@@ -16,14 +18,15 @@ class EditorDecision extends AbstractDataObjectMapper {
      * @param $context
      * @return mixed
      */
-    protected static function preMap($dataObject, $context) {
+    protected static function preMap($dataObject, $context)
+    {
         // See: classes/submission/common/Action.inc.php:21-24
         $dataObject->decision = @[
             1 => 'accept',
             2 => 'revise',
             3 => 'resubmit',
             4 => 'decline'
-        ][(int) $dataObject->decision];
+        ][(int)$dataObject->decision];
 
         $dataObject->editor = (object)['source_record_key' => SourceRecordKey::editor($dataObject->editorId)];
 

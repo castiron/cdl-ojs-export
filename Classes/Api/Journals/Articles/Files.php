@@ -1,10 +1,12 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class Files extends ApiRoute  {
+class Files extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $fileRepository;
@@ -21,21 +23,25 @@ class Files extends ApiRoute  {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
 
-        if(!is_null($parameters['file'])) {
+        if (!is_null($parameters['file'])) {
             return (new \JournalTransporterPlugin\Api\Files)
                 ->execute(['article' => $article->getId(), 'file' => $parameters['file']], $arguments);
         }
 
         $files = $this->getAllFilesForArticle($article);
 
-        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::dataObjectToArray($files);
-        return array_map(function($item) {
-            return NestedMapper::map($item);
-        }, $files);
+        if ($arguments[ApiRoute::DEBUG_ARGUMENT]) {
+            return DataObject::dataObjectToArray($files);
+        }
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item);
+            },
+            $files
+        );
     }
 
     /**
-
      * @param $type
      * @param $article
      * @return mixed

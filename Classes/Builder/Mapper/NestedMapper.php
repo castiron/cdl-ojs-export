@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper;
 
 /**
  * Class NestedMapper
@@ -6,17 +7,20 @@
  */
 class NestedMapper
 {
-    public static function map($mappable, $context = null, $placeholder = false) {
-        if($placeholder) return "PLACEHOLDER";
+    public static function map($mappable, $context = null, $placeholder = false)
+    {
+        if ($placeholder) {
+            return "PLACEHOLDER";
+        }
 
-        if(is_array($mappable)) {
+        if (is_array($mappable)) {
             $out = [];
-            foreach($mappable as $item) {
+            foreach ($mappable as $item) {
                 $out[] = self::map($item, $context);
             }
-        } elseif(is_object($mappable)) {
-            if(get_class($mappable) === 'stdClass') {
-                if(isset($mappable->__mapperClass)) {
+        } elseif (is_object($mappable)) {
+            if (get_class($mappable) === 'stdClass') {
+                if (isset($mappable->__mapperClass)) {
                     $mappableClass = $mappable->__mapperClass;
                 } else {
                     return $mappable;
@@ -25,8 +29,8 @@ class NestedMapper
                 $mappableClass = ucfirst(get_class($mappable));
             }
 
-            $className = '\\JournalTransporterPlugin\\Builder\\Mapper\\DataObject\\'.$mappableClass;
-            if(class_exists($className)) {
+            $className = '\\JournalTransporterPlugin\\Builder\\Mapper\\DataObject\\' . $mappableClass;
+            if (class_exists($className)) {
                 $out = $className::map($mappable, $context);
             } else {
                 $out = "Couldn't find mapper " . $className;

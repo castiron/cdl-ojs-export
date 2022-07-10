@@ -1,13 +1,16 @@
-<?php namespace JournalTransporterPlugin\DAO;
+<?php
+namespace JournalTransporterPlugin\DAO;
 
 import('lib.pkp.classes.signoff.Signoff');
 import('lib.pkp.classes.signoff.SignoffDAO');
 
-class Signoff extends \SignoffDAO {
+class Signoff extends \SignoffDAO
+{
     /**
      * Constructor
      */
-    function __construct() {
+    function __construct()
+    {
         parent::SignoffDAO();
     }
 
@@ -15,7 +18,8 @@ class Signoff extends \SignoffDAO {
      * Construct a new data object corresponding to this DAO.
      * @return Note
      */
-    function newDataObject() {
+    function newDataObject()
+    {
         return new \Signoff;
     }
 
@@ -25,10 +29,11 @@ class Signoff extends \SignoffDAO {
      * @param $assocType int
      * @return object DAOResultFactory containing matching Signoff objects
      */
-    function getByAssoc($assocType, $assocId) {
+    function getByAssoc($assocType, $assocId)
+    {
         // Ordering by id because that correlates with order of process
         $sql = 'SELECT * FROM signoffs WHERE assoc_type = ? AND assoc_id = ? ORDER BY signoff_id ASC';
-        $params = array((int) $assocType, (int) $assocId);
+        $params = array((int)$assocType, (int)$assocId);
 
         $result =& $this->retrieve($sql, $params);
 

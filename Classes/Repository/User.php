@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 
-class User {
+class User
+{
     use Repository;
 
     /**

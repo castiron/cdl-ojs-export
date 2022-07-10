@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Utility\Enums;
+<?php
+namespace JournalTransporterPlugin\Utility\Enums;
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 
@@ -9,7 +10,8 @@ class Role
      * @param $route
      * @return string
      */
-    static public function getRoleName($roleId) {
+    static public function getRoleName($roleId)
+    {
         return str_replace('user.role.', '', DAOFactory::get()->getDAO('role')->getRoleName($roleId));
     }
 }

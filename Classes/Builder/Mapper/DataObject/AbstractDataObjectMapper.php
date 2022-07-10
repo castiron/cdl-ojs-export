@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\Date;
@@ -10,7 +11,8 @@ use JournalTransporterPlugin\Utility\SourceRecordKey;
 use JournalTransporterPlugin\Exception\InvalidMappingConfigurationException;
 use JournalTransporterPlugin\Exception\InvalidArgumentException;
 
-class AbstractDataObjectMapper {
+class AbstractDataObjectMapper
+{
 
     /**
      * Where we store record identifiers in the JSON we output
@@ -19,7 +21,7 @@ class AbstractDataObjectMapper {
 
     const ON_ERROR_TRIGGER_EXCEPTION = '!@#$!@#$';
 
-    /** @var array  */
+    /** @var array */
     protected static $contexts = [];
 
     /**
@@ -44,13 +46,16 @@ class AbstractDataObjectMapper {
             $property = trim($mappingConfig['property']);
             $source = trim(@$mappingConfig['source']);
 
-            $onError = array_key_exists('onError', $mappingConfig) ? $mappingConfig['onError'] : self::ON_ERROR_TRIGGER_EXCEPTION;
+            $onError = array_key_exists(
+                'onError',
+                $mappingConfig
+            ) ? $mappingConfig['onError'] : self::ON_ERROR_TRIGGER_EXCEPTION;
             $internalContext = array_key_exists('context', $mappingConfig) ? $mappingConfig['context'] : null;
 
-            if(strlen($source) === 0) {
+            if (strlen($source) === 0) {
                 $source = $property;
             }
-            if(is_null($context) || self::includeFieldInContext($context, $property)) {
+            if (is_null($context) || self::includeFieldInContext($context, $property)) {
                 // Special handling for source record keys
                 if ($property === self::SOURCE_RECORD_KEY_PROPERTY) {
                     $value = static::getSourceRecordKey($dataObject, $source);
@@ -59,15 +64,18 @@ class AbstractDataObjectMapper {
                 }
 
                 // Turns an id into a source record key object
-                if(array_key_exists('sourceRecordKey', $mappingConfig)) {
+                if (array_key_exists('sourceRecordKey', $mappingConfig)) {
                     $value = self::toSourceRecordKey($mappingConfig['sourceRecordKey'], $value);
                 }
 
                 // Turns an enum value into a label
-                if(array_key_exists('mapTo', $mappingConfig)) {
-                    if($mappingConfig['mapTo'] == 'role') $value = Role::getRoleName($value);
-                    if($mappingConfig['mapTo'] == 'commentType') $value = CommentType::getCommentTypeName($value);
-
+                if (array_key_exists('mapTo', $mappingConfig)) {
+                    if ($mappingConfig['mapTo'] == 'role') {
+                        $value = Role::getRoleName($value);
+                    }
+                    if ($mappingConfig['mapTo'] == 'commentType') {
+                        $value = CommentType::getCommentTypeName($value);
+                    }
                 }
 
                 // Process filters that transform values
@@ -92,9 +100,12 @@ class AbstractDataObjectMapper {
      */
     protected static function toSourceRecordKey($type, $id)
     {
-        if(!(int) $id) return null;
-        if(method_exists(SourceRecordKey::class, $type))
-            return (object) ['source_record_key' => SourceRecordKey::$type($id)];
+        if (!(int)$id) {
+            return null;
+        }
+        if (method_exists(SourceRecordKey::class, $type)) {
+            return (object)['source_record_key' => SourceRecordKey::$type($id)];
+        }
         throw new InvalidArgumentException("Can't generate source record key for $type");
     }
 
@@ -105,21 +116,22 @@ class AbstractDataObjectMapper {
      * @param $onError The value to return if there's an error, defaults to except via cheap mechanism
      * @throws
      */
-    protected static function getFieldValue($key, $object, $onError = self::ON_ERROR_TRIGGER_EXCEPTION) {
+    protected static function getFieldValue($key, $object, $onError = self::ON_ERROR_TRIGGER_EXCEPTION)
+    {
         $currentValue = $object;
         $fieldNameParts = explode('.', $key);
-        while(count($fieldNameParts) > 0) {
+        while (count($fieldNameParts) > 0) {
             $fieldName = array_shift($fieldNameParts);
-            if(is_array($currentValue)) {
+            if (is_array($currentValue)) {
                 $currentValue = array_key_exists($fieldName, $currentValue) ? $currentValue[$fieldName] : null;
-            } elseif(is_object($currentValue)) {
+            } elseif (is_object($currentValue)) {
                 $methodName = 'get' . ucfirst($fieldName);
-                if(method_exists($currentValue, $methodName)) {
+                if (method_exists($currentValue, $methodName)) {
                     $currentValue = $currentValue->$methodName();
-                } elseif(property_exists($object, $fieldName)) {
+                } elseif (property_exists($object, $fieldName)) {
                     $currentValue = $currentValue->$fieldName;
                 } else {
-                    if($onError !== self::ON_ERROR_TRIGGER_EXCEPTION) {
+                    if ($onError !== self::ON_ERROR_TRIGGER_EXCEPTION) {
                         return $onError;
                     }
                     throw new InvalidMappingConfigurationException("Can't get \"$key\" from " . get_class($object));
@@ -137,15 +149,22 @@ class AbstractDataObjectMapper {
     protected static function includeFieldInContext($context, $field)
     {
         $mergedContexts = array_merge(self::$sharedContexts, static::$contexts);
-        if(array_key_exists($context, $mergedContexts)) {
+        if (array_key_exists($context, $mergedContexts)) {
             $contextConfiguration = $mergedContexts[$context];
-            if(array_key_exists('include', $contextConfiguration) && is_array($contextConfiguration['include']) &&
-                in_array($field, $contextConfiguration['include'])) return true;
+            if (array_key_exists('include', $contextConfiguration) && is_array($contextConfiguration['include']) &&
+                in_array($field, $contextConfiguration['include'])) {
+                return true;
+            }
 
 
-            if(array_key_exists('exclude', $contextConfiguration) && $contextConfiguration['exclude'] == '*' ||
-                (is_array($contextConfiguration->exclude) && (in_array($field, $contextConfiguration->exclude ||
-                in_array('*', $contextConfiguration['exclude']))))) return false;
+            if (array_key_exists('exclude', $contextConfiguration) && $contextConfiguration['exclude'] == '*' ||
+                (is_array($contextConfiguration->exclude) && (in_array(
+                        $field,
+                        $contextConfiguration->exclude ||
+                        in_array('*', $contextConfiguration['exclude'])
+                    )))) {
+                return false;
+            }
 
             return true;
         }
@@ -155,7 +174,8 @@ class AbstractDataObjectMapper {
      * Use this on the mapper objects to transform the data before the mapping
      * @param $dataObject
      */
-    protected static function preMap($dataObject, $context) {
+    protected static function preMap($dataObject, $context)
+    {
         return $dataObject;
     }
 
@@ -165,7 +185,8 @@ class AbstractDataObjectMapper {
      * @param $out
      * @param $dataObject
      */
-    protected static function postMap($out, $dataObject, $context) {
+    protected static function postMap($out, $dataObject, $context)
+    {
         return $out;
     }
 
@@ -173,13 +194,15 @@ class AbstractDataObjectMapper {
      * @param $model
      * @return string
      */
-    protected static function getSourceRecordKey($model, $theirs = 'id') {
-        if(get_class($model) === 'stdClass') list($class, $id) = [$model->__mapperClass, $model->$theirs];
-        else {
-            $method = 'get'.ucfirst($theirs);
+    protected static function getSourceRecordKey($model, $theirs = 'id')
+    {
+        if (get_class($model) === 'stdClass') {
+            list($class, $id) = [$model->__mapperClass, $model->$theirs];
+        } else {
+            $method = 'get' . ucfirst($theirs);
             list($class, $id) = [get_class($model), $model->$method()];
         }
-        return $class.':'.$id;
+        return $class . ':' . $id;
     }
 
     /**
@@ -188,11 +211,20 @@ class AbstractDataObjectMapper {
      * @return bool|mixed|string
      * @throws \Exception
      */
-    protected static function applyFilter($filter, $value) {
-        if($filter === 'boolean') return static::applyBooleanFilter($value);
-        if($filter === 'datetime') return static::applyDatetimeFilter($value);
-        if($filter === 'integer') return static::applyIntegerFilter($value);
-        if($filter === 'html') return static::applyHTMLFilter($value);
+    protected static function applyFilter($filter, $value)
+    {
+        if ($filter === 'boolean') {
+            return static::applyBooleanFilter($value);
+        }
+        if ($filter === 'datetime') {
+            return static::applyDatetimeFilter($value);
+        }
+        if ($filter === 'integer') {
+            return static::applyIntegerFilter($value);
+        }
+        if ($filter === 'html') {
+            return static::applyHTMLFilter($value);
+        }
 
         throw new InvalidMappingConfigurationException("Filter $filter does not exist");
     }
@@ -202,8 +234,9 @@ class AbstractDataObjectMapper {
      * @return string|null
      * @throws \Exception
      */
-    protected static function applyDatetimeFilter($value) {
-        if(!is_null($value) && strlen($value) > 0) {
+    protected static function applyDatetimeFilter($value)
+    {
+        if (!is_null($value) && strlen($value) > 0) {
             return Date::formatDateString($value);
         }
         return null;
@@ -213,23 +246,26 @@ class AbstractDataObjectMapper {
      * @param $value
      * @return bool
      */
-    protected static function applyBooleanFilter($value) {
-        return (bool) $value;
+    protected static function applyBooleanFilter($value)
+    {
+        return (bool)$value;
     }
 
     /**
      * @param $value
      * @return bool
      */
-    protected static function applyIntegerFilter($value) {
-        return (int) $value;
+    protected static function applyIntegerFilter($value)
+    {
+        return (int)$value;
     }
 
     /**
      * @param $value
      * @return string
      */
-    protected static function applyHTMLFilter($value) {
+    protected static function applyHTMLFilter($value)
+    {
         return HTML::cleanHtml($value);
     }
 }

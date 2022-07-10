@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Api;
+<?php
+namespace JournalTransporterPlugin\Api;
 
-class Files extends ApiRoute {
+class Files extends ApiRoute
+{
     protected $fileRepository;
     protected $articleRepository;
 
@@ -9,17 +11,17 @@ class Files extends ApiRoute {
         list($fileId, $revision) = explode('-', $parameters['file']);
 
         // This `article` parameter only shows up when the request is forwarded from the article/
-        if(!is_null($parameters['article'])) {
+        if (!is_null($parameters['article'])) {
             $article = $this->articleRepository->fetchById($parameters['article']);
-            $file = $this->fileRepository->fetchByIdAndArticle((int) $fileId, $article, (int) $revision ?: 0);
+            $file = $this->fileRepository->fetchByIdAndArticle((int)$fileId, $article, (int)$revision ?: 0);
         } else {
-            $file = $this->fileRepository->fetchById((int) $fileId, (int) $revision ?: 0);
+            $file = $this->fileRepository->fetchById((int)$fileId, (int)$revision ?: 0);
         }
 
         $fp = fopen($file->getFilePath(), 'rb');
-        header("Content-Type: ". $file->getFileType());
+        header("Content-Type: " . $file->getFileType());
         header("Content-Length: " . filesize($file->getFilePath()));
-        header("Content-Disposition: attachment; filename=".$this->getValidFilename($file->getOriginalFilename()));
+        header("Content-Disposition: attachment; filename=" . $this->getValidFilename($file->getOriginalFilename()));
 
         fpassthru($fp);
         exit;

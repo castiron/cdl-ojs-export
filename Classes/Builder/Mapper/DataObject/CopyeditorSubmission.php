@@ -1,5 +1,7 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-class CopyeditorSubmission extends AbstractSubmission {
+class CopyeditorSubmission extends AbstractSubmission
+{
 
 }

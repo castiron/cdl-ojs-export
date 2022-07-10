@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
-class CopyeditorSubmission {
+class CopyeditorSubmission
+{
     use Repository;
 
     /**

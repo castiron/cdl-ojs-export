@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
@@ -20,7 +21,8 @@ class ReviewFormElement extends AbstractDataObjectMapper
      * @param $dataObject
      * @return mixed
      */
-    protected static function preMap($dataObject) {
+    protected static function preMap($dataObject)
+    {
         $dataObject->type = self::getElementType($dataObject->getElementType());
         $dataObject->responses = self::getFormattedResponses($dataObject->getLocalizedPossibleResponses());
         return $dataObject;
@@ -30,10 +32,15 @@ class ReviewFormElement extends AbstractDataObjectMapper
      * @param $responses
      * @return object[]|null
      */
-    protected static function getFormattedResponses($responses) {
-        if(is_null($responses)) return null;
+    protected static function getFormattedResponses($responses)
+    {
+        if (is_null($responses)) {
+            return null;
+        }
         return array_map(
-            function($response) { return $response['content']; },
+            function ($response) {
+                return $response['content'];
+            },
             $responses
         );
     }

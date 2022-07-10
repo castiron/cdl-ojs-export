@@ -1,3 +1,6 @@
-<?php namespace JournalTransporterPlugin\Exception;
+<?php
+namespace JournalTransporterPlugin\Exception;
 
-class UnknownDatabaseAccessObjectException extends PluginException {}
+class UnknownDatabaseAccessObjectException extends PluginException
+{
+}

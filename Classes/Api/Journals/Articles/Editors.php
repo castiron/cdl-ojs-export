@@ -1,9 +1,11 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 
-class Editors extends ApiRoute  {
+class Editors extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $editAssignmentRepository;
@@ -19,8 +21,11 @@ class Editors extends ApiRoute  {
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
         $editors = $this->editAssignmentRepository->fetchByArticle($article);
 
-        return array_map(function($item) {
-            return NestedMapper::map($item);
-        }, $editors->toArray());
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item);
+            },
+            $editors->toArray()
+        );
     }
 }

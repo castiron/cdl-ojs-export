@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php
+namespace JournalTransporterPlugin\Utility;
 
-class Date {
+class Date
+{
     /**
      * These might be configurable one day, but for now it's not
      */

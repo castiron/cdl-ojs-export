@@ -1,3 +1,6 @@
-<?php namespace JournalTransporterPlugin\Exception;
+<?php
+namespace JournalTransporterPlugin\Exception;
 
-class CannotFetchDataObjectException extends PluginException implements \Throwable {}
+class CannotFetchDataObjectException extends PluginException implements \Throwable
+{
+}

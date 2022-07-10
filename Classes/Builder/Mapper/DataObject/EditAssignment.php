@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
-class EditAssignment extends AbstractDataObjectMapper {
+class EditAssignment extends AbstractDataObjectMapper
+{
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'editId'],
         ['property' => 'editor'],
@@ -21,7 +23,8 @@ class EditAssignment extends AbstractDataObjectMapper {
      * @param $context
      * @return mixed
      */
-    protected static function preMap($dataObject, $context) {
+    protected static function preMap($dataObject, $context)
+    {
         $dataObject->editor = (object)['source_record_key' => SourceRecordKey::editor($dataObject->getEditorId())];
 
         return $dataObject;

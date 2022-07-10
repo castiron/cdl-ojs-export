@@ -1,5 +1,7 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-class LayoutEditorSubmission extends AbstractSubmission {
+class LayoutEditorSubmission extends AbstractSubmission
+{
 
 }

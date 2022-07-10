@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php
+namespace JournalTransporterPlugin\Utility;
 
 class SourceRecordKey
 {
@@ -26,7 +27,7 @@ class SourceRecordKey
      */
     static public function user($id)
     {
-        return \User::class.':'.$id;
+        return \User::class . ':' . $id;
     }
 
     /**
@@ -35,7 +36,7 @@ class SourceRecordKey
      */
     static public function issue($id)
     {
-        return \Issue::class.':'.$id;
+        return \Issue::class . ':' . $id;
     }
 
     /**
@@ -44,7 +45,7 @@ class SourceRecordKey
      */
     static public function section($id)
     {
-        return \Section::class.':'.$id;
+        return \Section::class . ':' . $id;
     }
 
     /**
@@ -53,7 +54,7 @@ class SourceRecordKey
      */
     static public function reviewForm($id)
     {
-        return \ReviewForm::class.':'.$id;
+        return \ReviewForm::class . ':' . $id;
     }
 
     /**
@@ -62,7 +63,7 @@ class SourceRecordKey
      */
     static public function reviewAssignment($id)
     {
-        return \ReviewAssignment::class.':'.$id;
+        return \ReviewAssignment::class . ':' . $id;
     }
 
     /**
@@ -73,7 +74,7 @@ class SourceRecordKey
      */
     static public function reviewAssignmentResponse($id, $index)
     {
-        return 'ReviewAssignmentResponse:'.$id.'-'.$index;
+        return 'ReviewAssignmentResponse:' . $id . '-' . $index;
     }
 
     /**
@@ -84,6 +85,6 @@ class SourceRecordKey
      */
     static public function round($articleId, $round)
     {
-        return 'ReviewRound:'.$articleId.':'.$round;
+        return 'ReviewRound:' . $articleId . ':' . $round;
     }
 }

@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles;
 
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
@@ -6,7 +7,8 @@ use JournalTransporterPlugin\Exception\CannotFetchDataObjectException;
 use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\Enums\Role;
 
-class RevisionRequests extends ApiRoute  {
+class RevisionRequests extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $editorSubmissionRepository;
@@ -35,9 +37,12 @@ class RevisionRequests extends ApiRoute  {
     {
         $decisions = $this->editorSubmissionRepository->fetchEditorDecisionsByArticle($article);
 
-        return array_map(function ($decision) {
-            return NestedMapper::map($this->editDecisionArrayToObject($decision), 'sourceRecordKey');
-        }, $decisions);
+        return array_map(
+            function ($decision) {
+                return NestedMapper::map($this->editDecisionArrayToObject($decision), 'sourceRecordKey');
+            },
+            $decisions
+        );
     }
 
     /**
@@ -56,18 +61,22 @@ class RevisionRequests extends ApiRoute  {
          * Make sure the decision exists
          */
         $foundEditDecision = null;
-        foreach($decisions as $decision) {
-            if($decision['editDecisionId'] == $revisionRequest) {
+        foreach ($decisions as $decision) {
+            if ($decision['editDecisionId'] == $revisionRequest) {
                 $foundEditDecision = $decision;
                 break;
             }
         }
-        if(is_null($foundEditDecision)) throw new CannotFetchDataObjectException("Edit decision $revisionRequest does not exist");
+        if (is_null($foundEditDecision)) {
+            throw new CannotFetchDataObjectException("Edit decision $revisionRequest does not exist");
+        }
 
         list($commentsStart, $commentsEnd) = $this->determineCommentWindow($decisions, $revisionRequest);
 
         $decision = NestedMapper::map($this->editDecisionArrayToObject($foundEditDecision));
-        $decision['comment'] = $this->formatComments($this->fetchEditorCommentsWithinRange($article, $commentsStart, $commentsEnd));
+        $decision['comment'] = $this->formatComments(
+            $this->fetchEditorCommentsWithinRange($article, $commentsStart, $commentsEnd)
+        );
         return $decision;
     }
 
@@ -81,17 +90,19 @@ class RevisionRequests extends ApiRoute  {
     {
         $commentsStart = null;
         $commentsEnd = null;
-        foreach($decisions as $decision) {
-            if(is_null($commentsEnd) && !is_null($commentsStart)) {
+        foreach ($decisions as $decision) {
+            if (is_null($commentsEnd) && !is_null($commentsStart)) {
                 $commentsEnd = new \DateTime($decision['dateDecided'], new \DateTimeZone('America/Los_Angeles'));
             }
 
-            if(is_null($commentsStart)) {
-                if($decision['editDecisionId'] == $requestedDecision) {
+            if (is_null($commentsStart)) {
+                if ($decision['editDecisionId'] == $requestedDecision) {
                     $commentsStart = new \DateTime($decision['dateDecided'], new \DateTimeZone('America/Los_Angeles'));
                 }
             }
-            if(!is_null($commentsStart) && !is_null($commentsEnd)) break;
+            if (!is_null($commentsStart) && !is_null($commentsEnd)) {
+                break;
+            }
         }
         return [$commentsStart, $commentsEnd];
     }
@@ -105,8 +116,9 @@ class RevisionRequests extends ApiRoute  {
     protected function fetchEditorCommentsWithinRange($article, $commentsStart, $commentsEnd)
     {
         $allComments = $this->articleCommentRepository->fetchEditorCommentsByArticle($article);
-        $comments = array_filter($allComments,
-            function($comment) use($commentsStart, $commentsEnd) {
+        $comments = array_filter(
+            $allComments,
+            function ($comment) use ($commentsStart, $commentsEnd) {
                 return (is_null($commentsStart) || Date::strToDatetime($comment->getDatePosted()) >= $commentsStart) &&
                     (is_null($commentsEnd) || Date::strToDatetime($comment->getDatePosted()) < $commentsEnd);
             }
@@ -124,16 +136,16 @@ class RevisionRequests extends ApiRoute  {
 //        print_R($comments); die();
         $digest = [];
 
-        foreach($comments as $comment) {
+        foreach ($comments as $comment) {
             $digest[] = "
-Date: ".Date::formatDateString($comment->getDatePosted())."
-Role: ".ucfirst(Role::getRoleName($comment->getRoleId()))."
+Date: " . Date::formatDateString($comment->getDatePosted()) . "
+Role: " . ucfirst(Role::getRoleName($comment->getRoleId())) . "
 Subject: {$comment->getCommentTitle()}
 
 {$comment->getComments()}
 ";
         }
-        $separator = "\n\n".str_repeat('=', 80)."\n\n";
+        $separator = "\n\n" . str_repeat('=', 80) . "\n\n";
 
         $string = wordwrap(implode($separator, $digest), 80);
 
@@ -148,7 +160,7 @@ Subject: {$comment->getCommentTitle()}
      */
     protected function editDecisionArrayToObject($decision)
     {
-        $decisionObject = (object) $decision;
+        $decisionObject = (object)$decision;
         $decisionObject->__mapperClass = 'EditorDecision';
         return $decisionObject;
     }

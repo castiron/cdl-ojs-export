@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php
+namespace JournalTransporterPlugin\Utility;
 
 class Regex
 {
@@ -7,7 +8,8 @@ class Regex
      * @param $route
      * @return array|mixed
      */
-    static public function getRegexNamedMatches($route) {
+    static public function getRegexNamedMatches($route)
+    {
         return preg_match_all('/\?P<([a-zA-Z0-9_]+)>/', $route, $matches) ? $matches[1] : [];
     }
 }

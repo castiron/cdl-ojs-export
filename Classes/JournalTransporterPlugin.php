@@ -18,7 +18,8 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 
 use JournalTransporterPlugin\Command\Controller;
 
-class JournalTransporterPlugin extends GenericPlugin {
+class JournalTransporterPlugin extends GenericPlugin
+{
     const PLUGIN_DISPLAY_NAME = 'Journal Transporter for OJS';
     const PLUGIN_DESCRIPTION = "An OJS plugin for Journal Tranporter: at present, it only exports";
     const PLUGIN_CONFIG_KEY = 'journaltransporter';
@@ -27,13 +28,14 @@ class JournalTransporterPlugin extends GenericPlugin {
      * Called as a plugin is registered to the registry
      * @param $category String Name of category plugin was registered to
      * @return boolean True if plugin initialized successfully; if false,
-     * 	the plugin will not be registered.
+     *    the plugin will not be registered.
      */
-    function register($category, $path) {
+    function register($category, $path)
+    {
         $this->registerAutoload();
 
-        if(parent::register($category, $path)) {
-            if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'enable_plugin_endpoints') && $this->requestIsAuthorized()) {
+        if (parent::register($category, $path)) {
+            if (Config::getVar(self::PLUGIN_CONFIG_KEY, 'enable_plugin_endpoints') && $this->requestIsAuthorized()) {
                 $this->registerLoadHandlerHook();
             }
         }
@@ -43,24 +45,31 @@ class JournalTransporterPlugin extends GenericPlugin {
      * Check to see if the current request is authorized
      * @return bool
      */
-    protected function requestIsAuthorized() {
+    protected function requestIsAuthorized()
+    {
         // No authentication of any kind required, don't need to check
-        if(!Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_basic_auth') &&
+        if (!Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_basic_auth') &&
             !Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_site_admin')
-        ) return true;
+        ) {
+            return true;
+        }
 
         // If basic auth is required and fails, no access for you!
-        if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_basic_auth')) {
+        if (Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_basic_auth')) {
             // Can't enable basic auth with an empty username or password
-            if(!(strlen($_SERVER['PHP_AUTH_USER']) > 0) || !(strlen($_SERVER['PHP_AUTH_PW']) > 0)) return false;
+            if (!(strlen($_SERVER['PHP_AUTH_USER']) > 0) || !(strlen($_SERVER['PHP_AUTH_PW']) > 0)) {
+                return false;
+            }
 
-            if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'basic_auth_user') !== $_SERVER['PHP_AUTH_USER'] ||
-                Config::getVar(self::PLUGIN_CONFIG_KEY, 'basic_auth_password') !== $_SERVER['PHP_AUTH_PW']) return false;
+            if (Config::getVar(self::PLUGIN_CONFIG_KEY, 'basic_auth_user') !== $_SERVER['PHP_AUTH_USER'] ||
+                Config::getVar(self::PLUGIN_CONFIG_KEY, 'basic_auth_password') !== $_SERVER['PHP_AUTH_PW']) {
+                return false;
+            }
         }
 
 
         // If site admin is required and this isn't a site admin, no access for you!
-        if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_site_admin') && !Validation::isSiteAdmin()) {
+        if (Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_site_admin') && !Validation::isSiteAdmin()) {
             return false;
         }
 
@@ -70,15 +79,19 @@ class JournalTransporterPlugin extends GenericPlugin {
     /**
      *
      */
-    protected function registerLoadHandlerHook() {
-        HookRegistry::register('LoadHandler', function ($hookname, $params) {
-            if ($params[0] == 'jt') {
-                define('HANDLER_CLASS', 'JournalTransporterAPIHandler');
-                define('CDL_EXPORT_PLUGIN_NAME', $this->getName());
-                $handlerFile =& $params[2];
-                $handlerFile = $this->getPluginPath() . '/Classes/' . 'JournalTransporterAPIHandler.php';
+    protected function registerLoadHandlerHook()
+    {
+        HookRegistry::register(
+            'LoadHandler',
+            function ($hookname, $params) {
+                if ($params[0] == 'jt') {
+                    define('HANDLER_CLASS', 'JournalTransporterAPIHandler');
+                    define('CDL_EXPORT_PLUGIN_NAME', $this->getName());
+                    $handlerFile =& $params[2];
+                    $handlerFile = $this->getPluginPath() . '/Classes/' . 'JournalTransporterAPIHandler.php';
+                }
             }
-        });
+        );
     }
 
     /**
@@ -86,41 +99,48 @@ class JournalTransporterPlugin extends GenericPlugin {
      * its category.
      * @return String name of plugin
      */
-    function getName() {
+    function getName()
+    {
         return __CLASS__;
     }
 
     /**
      * @return string
      */
-    function getDisplayName() {
+    function getDisplayName()
+    {
         return self::PLUGIN_DISPLAY_NAME;
     }
 
     /**
      * @return string
      */
-    function getDescription() {
+    function getDescription()
+    {
         return self::PLUGIN_DESCRIPTION;
     }
 
-    function display($args) {
-        die("Code in ".__CLASS__."::".__METHOD__." doesn't do anything.");
+    function display($args)
+    {
+        die("Code in " . __CLASS__ . "::" . __METHOD__ . " doesn't do anything.");
     }
 
     /**
      *
      */
-    function registerAutoload() {
-        spl_autoload_register(function($class) {
-            $namespace = 'JournalTransporterPlugin\\';
-            if(strpos($class, $namespace) === 0) {
-                $file = __DIR__.'/'.str_replace('\\', '/', substr($class, strlen($namespace))).'.php';
-                if(file_exists($file)) {
-                    include $file;
+    function registerAutoload()
+    {
+        spl_autoload_register(
+            function ($class) {
+                $namespace = 'JournalTransporterPlugin\\';
+                if (strpos($class, $namespace) === 0) {
+                    $file = __DIR__ . '/' . str_replace('\\', '/', substr($class, strlen($namespace))) . '.php';
+                    if (file_exists($file)) {
+                        include $file;
+                    }
                 }
             }
-        });
+        );
     }
 }
 

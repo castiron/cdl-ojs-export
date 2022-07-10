@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Repository\PublishedArticle;
 use JournalTransporterPlugin\Repository\AuthorSubmission;
@@ -6,8 +7,14 @@ use JournalTransporterPlugin\Repository\EditAssignment;
 use JournalTransporterPlugin\Utility\Enums\Discipline;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
-class Article extends AbstractDataObjectMapper {
-    protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'datePublished']]];
+class Article extends AbstractDataObjectMapper
+{
+    protected static $contexts = [
+        'index' => [
+            'exclude' => '*',
+            'include' => ['sourceRecordKey', 'title', 'datePublished']
+        ]
+    ];
 
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'id'],
@@ -21,7 +28,12 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateUpdated', 'source' => 'lastModified', 'filters' => ['datetime']],
-        ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null, 'filters' => ['datetime']],
+        [
+            'property' => 'datePublished',
+            'source' => 'publishedArticle.datePublished',
+            'onError' => null,
+            'filters' => ['datetime']
+        ],
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
         ['property' => 'mostRecentEditorDecision'],
@@ -46,9 +58,15 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->disciplines = self::mapDisciplines($dataObject);
 
         $dataObject->issues = is_null($dataObject->publishedArticle) ?
-            [] : [(object) ['source_record_key' => SourceRecordKey::issue($dataObject->publishedArticle->getIssueId())]];
+            [] : [(object)['source_record_key' => SourceRecordKey::issue($dataObject->publishedArticle->getIssueId())]];
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
-            [] : [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
+            [] : [
+                (object)[
+                    'source_record_key' => SourceRecordKey::section(
+                        $dataObject->publishedArticle->getSectionId()
+                    )
+                ]
+            ];
 
         $dataObject->externalIds = self::getExternalIds($dataObject);
 
@@ -65,11 +83,11 @@ class Article extends AbstractDataObjectMapper {
     protected static function getExternalIds($dataObject)
     {
         $ids = [];
-        $ids[] = (object) ['name' => 'source_id', 'value' => $dataObject->getId()];
+        $ids[] = (object)['name' => 'source_id', 'value' => $dataObject->getId()];
 
         // This is quite specific to CDL
-        if($ark = $dataObject->getLocalizedData('eschol_ark')) {
-            $ids[] = (object) ['name' => 'ark', 'value' => $ark];
+        if ($ark = $dataObject->getLocalizedData('eschol_ark')) {
+            $ids[] = (object)['name' => 'ark', 'value' => $ark];
         }
 
         return $ids;
@@ -83,16 +101,21 @@ class Article extends AbstractDataObjectMapper {
     {
         $editorDecisions = (new AuthorSubmission)->fetchEditorDecisionsByArticle($dataObject);
 
-        if(count($editorDecisions) == 0) return [];
+        if (count($editorDecisions) == 0) {
+            return [];
+        }
 
-        usort($editorDecisions, function($a, $b) {
-            $dateA = strtotime($a['dateDecided']);
-            $dateB = strtotime($b['dateDecided']);
+        usort(
+            $editorDecisions,
+            function ($a, $b) {
+                $dateA = strtotime($a['dateDecided']);
+                $dateB = strtotime($b['dateDecided']);
 
-            return $dateB > $dateA;
-        });
+                return $dateB > $dateA;
+            }
+        );
 
-        $editorDecision = (object) array_pop($editorDecisions);
+        $editorDecision = (object)array_pop($editorDecisions);
         $editorDecision->__mapperClass = 'EditorDecision';
         return $editorDecision;
     }
@@ -105,7 +128,9 @@ class Article extends AbstractDataObjectMapper {
     {
         return array_filter(
             array_map(
-                function($disciplineKey) { return Discipline::getDisciplineName($disciplineKey); },
+                function ($disciplineKey) {
+                    return Discipline::getDisciplineName($disciplineKey);
+                },
                 $dataObject->getLocalizedDiscipline()
             )
         );
@@ -130,14 +155,17 @@ class Article extends AbstractDataObjectMapper {
     {
         $status = $dataObject->getStatus();
 
-        return @[STATUS_ARCHIVED => 'rejected', // If not published and yes archived, it's rejected for all intents and purposes
-                 STATUS_QUEUED => 'submitted',
-                 STATUS_PUBLISHED => 'published',
-                 STATUS_DECLINED => 'rejected',
-                 STATUS_QUEUED_UNASSIGNED => 'submitted',
-                 STATUS_QUEUED_REVIEW => 'review',
-                 STATUS_QUEUED_EDITING => 'copyediting',
-                 STATUS_INCOMPLETE => 'draft']
-                 [$status] ?: null;
+        return @[
+            STATUS_ARCHIVED => 'rejected',
+            // If not published and yes archived, it's rejected for all intents and purposes
+            STATUS_QUEUED => 'submitted',
+            STATUS_PUBLISHED => 'published',
+            STATUS_DECLINED => 'rejected',
+            STATUS_QUEUED_UNASSIGNED => 'submitted',
+            STATUS_QUEUED_REVIEW => 'review',
+            STATUS_QUEUED_EDITING => 'copyediting',
+            STATUS_INCOMPLETE => 'draft'
+        ]
+        [$status] ?: null;
     }
 }

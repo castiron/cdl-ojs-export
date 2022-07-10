@@ -1,10 +1,12 @@
-<?php namespace JournalTransporterPlugin\Api\Journals;
+<?php
+namespace JournalTransporterPlugin\Api\Journals;
 
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class Issues extends ApiRoute  {
+class Issues extends ApiRoute
+{
     protected $journalRepository;
     protected $issueRepository;
 
@@ -15,7 +17,7 @@ class Issues extends ApiRoute  {
      */
     public function execute($parameters, $arguments)
     {
-        if(@$parameters['issue']) {
+        if (@$parameters['issue']) {
             return $this->getIssue($parameters['issue'], $parameters['journal'], $arguments[ApiRoute::DEBUG_ARGUMENT]);
         } else {
             return $this->getIssues($parameters);
@@ -29,11 +31,11 @@ class Issues extends ApiRoute  {
 
         // Determine the published order -- probably could be improved
         $sequence = null;
-        if($item->getPublished()) {
+        if ($item->getPublished()) {
             $i = 0;
             $publishedIssues = $this->issueRepository->fetchPublishedByJournal($journal)->toArray();
-            foreach($publishedIssues as $publishedIssue) {
-                if($publishedIssue->getId() == $item->getId()) {
+            foreach ($publishedIssues as $publishedIssue) {
+                if ($publishedIssue->getId() == $item->getId()) {
                     $sequence = $i;
                     break;
                 }
@@ -41,7 +43,9 @@ class Issues extends ApiRoute  {
             }
         }
 
-        if($debug) return DataObject::dataObjectToArray($item);
+        if ($debug) {
+            return DataObject::dataObjectToArray($item);
+        }
         $issue = NestedMapper::map($item);
         $issue['sequence'] = $sequence;
         return $issue;
@@ -62,7 +66,7 @@ class Issues extends ApiRoute  {
 
         $iterator = 0;
         $issues = [];
-        foreach($allIssues as $item) {
+        foreach ($allIssues as $item) {
             $issue = NestedMapper::map($item, 'index');
             $issue['sequence'] = $item->getPublished() ? $iterator++ : null;
             $issues[] = $issue;

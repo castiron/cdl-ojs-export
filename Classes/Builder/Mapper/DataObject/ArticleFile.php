@@ -1,11 +1,13 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Repository\File;
 use JournalTransporterPlugin\Repository\SupplementaryFile;
 use JournalTransporterPlugin\Repository\Article;
 use JournalTransporterPlugin\Repository\GalleyFile;
 
-class ArticleFile  extends AbstractDataObjectMapper {
+class ArticleFile extends AbstractDataObjectMapper
+{
 
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'fileId'],
@@ -33,15 +35,18 @@ class ArticleFile  extends AbstractDataObjectMapper {
      * @param $context
      * @return mixed
      */
-    protected static function preMap($dataObject, $context) {
-        if(!is_null($dataObject->getRevision())) $dataObject->parentSourceRecordKey = self::getParentSourceRecordKey($dataObject);
+    protected static function preMap($dataObject, $context)
+    {
+        if (!is_null($dataObject->getRevision())) {
+            $dataObject->parentSourceRecordKey = self::getParentSourceRecordKey($dataObject);
+        }
 
         $associatedFile = self::getAssociatedFileRecord($dataObject);
         $textFields = ['title', 'description', 'creator', 'publisher', 'source', 'typeOther'];
-        if(is_object($associatedFile)) {
-            if(method_exists($associatedFile, 'getLocalizedData')) {
+        if (is_object($associatedFile)) {
+            if (method_exists($associatedFile, 'getLocalizedData')) {
                 $settings = [];
-                foreach($textFields as $field) {
+                foreach ($textFields as $field) {
                     self::$mapping[] = ['property' => $field, 'source' => "settings.$field", 'onError' => null];
                     $settings[$field] = $associatedFile->getLocalizedData($field);
                 }
@@ -51,15 +56,15 @@ class ArticleFile  extends AbstractDataObjectMapper {
             // Add some boolean flags indicating the type of file based on the associatedFile record type
             $dataObject->isGalleyFile = in_array(
                 get_class($associatedFile),
-                [ \ArticleGalley::class, \ArticleHTMLGalley::class ]
+                [\ArticleGalley::class, \ArticleHTMLGalley::class]
             );
             $dataObject->isSupplementaryFile = get_class($associatedFile) === \SuppFile::class;
         }
 
         // Here's where we would define the $textFields for ArticleFiles that are not supps or galleys
         // TODO: at some point, we might want to set values programmatically for title, description, creator, etc.
-        if(!property_exists($dataObject, 'settings')) {
-            $dataObject->settings = [ 'title' => ''];
+        if (!property_exists($dataObject, 'settings')) {
+            $dataObject->settings = ['title' => ''];
         }
 
         return $dataObject;
@@ -73,7 +78,8 @@ class ArticleFile  extends AbstractDataObjectMapper {
      * @param $articleFiles
      * @return mixed
      */
-    protected function getAssociatedFileRecord($articleFile) {
+    protected function getAssociatedFileRecord($articleFile)
+    {
         $article = (new Article)->fetchById($articleFile->getArticleId());
 
         // Get the other file types, all of which are also article files
@@ -83,10 +89,11 @@ class ArticleFile  extends AbstractDataObjectMapper {
             (new SupplementaryFile)->fetchByArticle($article),
         ];
         $specialFiles = array_merge(...array_filter($specialFileGroups));
-        foreach($specialFiles as $specialFile) {
-
+        foreach ($specialFiles as $specialFile) {
             // File names are unique, in theory
-            if(basename($specialFile->getFilePath()) === basename($articleFile->getFilePath())) return $specialFile;
+            if (basename($specialFile->getFilePath()) === basename($articleFile->getFilePath())) {
+                return $specialFile;
+            }
         }
         return null;
     }
@@ -95,31 +102,48 @@ class ArticleFile  extends AbstractDataObjectMapper {
      * @param $model
      * @return string
      */
-    protected static function getSourceRecordKey($model) {
-        return self::generateSourceRecordKey(get_class($model), $model->getArticleId(), $model->getFileId(), $model->getRevision());
+    protected static function getSourceRecordKey($model)
+    {
+        return self::generateSourceRecordKey(
+            get_class($model),
+            $model->getArticleId(),
+            $model->getFileId(),
+            $model->getRevision()
+        );
     }
 
     /**
      * @param $dataObject
      * @return string
      */
-    protected static function getParentSourceRecordKey($dataObject) {
+    protected static function getParentSourceRecordKey($dataObject)
+    {
         $revision = $dataObject->getRevision();
-        if($revision <= 1) return null;
+        if ($revision <= 1) {
+            return null;
+        }
 
         $revisions = (new File)->fetchFileRevisionsUpTo($dataObject, $revision - 1);
         $firstRevision = array_pop($revisions);
 
-        if(is_null($firstRevision)) return null;
+        if (is_null($firstRevision)) {
+            return null;
+        }
 
-        return self::generateSourceRecordKey(get_class($dataObject), $dataObject->getArticleId(), $dataObject->getFileId(), $firstRevision->getRevision());
+        return self::generateSourceRecordKey(
+            get_class($dataObject),
+            $dataObject->getArticleId(),
+            $dataObject->getFileId(),
+            $firstRevision->getRevision()
+        );
     }
 
     /**
      * @param $model
      * @return string
      */
-    protected static function generateSourceRecordKey($modelName, $articleId, $fileId, $revision) {
-        return $modelName.':'.$articleId.':'.$fileId.'-'.($revision ?: '0');
+    protected static function generateSourceRecordKey($modelName, $articleId, $fileId, $revision)
+    {
+        return $modelName . ':' . $articleId . ':' . $fileId . '-' . ($revision ?: '0');
     }
 }

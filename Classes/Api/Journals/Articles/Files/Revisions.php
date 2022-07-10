@@ -1,9 +1,11 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Files;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles\Files;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 
-class Revisions extends ApiRoute  {
+class Revisions extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $fileRepository;
@@ -19,9 +21,12 @@ class Revisions extends ApiRoute  {
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
         $file = $this->fileRepository->fetchById($parameters['file']);
         $revisions = $this->fileRepository->fetchRevisionsByFile($file);
-        return array_map(function($item) {
-            return NestedMapper::map($item);
-        }, $revisions);
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item);
+            },
+            $revisions
+        );
     }
 
 }

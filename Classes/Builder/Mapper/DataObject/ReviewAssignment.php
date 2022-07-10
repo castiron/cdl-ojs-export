@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Repository\ArticleComment;
 use JournalTransporterPlugin\Repository\Article;
@@ -7,7 +8,8 @@ use JournalTransporterPlugin\Repository\ArticleEventLog;
 use JournalTransporterPlugin\Repository\SupplementaryFile;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
-class ReviewAssignment extends AbstractDataObjectMapper {
+class ReviewAssignment extends AbstractDataObjectMapper
+{
 
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'reviewId'],
@@ -58,7 +60,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         // because OJS includes review files that are not shared with reviewers.
         $dataObject->supplementaryFiles = array_filter(
             (new SupplementaryFile)->fetchByArticle($article),
-            function($file) {
+            function ($file) {
                 return $file->getShowReviewers() == true;
             }
         );
@@ -74,14 +76,21 @@ class ReviewAssignment extends AbstractDataObjectMapper {
 
     /**
      * @param $dataObject
-     * @return mixed 
+     * @return mixed
      */
     protected static function getEditorFromLogEntry($dataObject)
     {
         $logEntries = (new ArticleEventLog)
             ->getArticleLogEntriesByAssoc($dataObject->getArticleId(), 3, $dataObject->getReviewId())->toArray();
-        if(count($logEntries) == 0) return null;
-        usort($logEntries, function($a, $b) { return $a->getDateLogged() > $b->getDateLogged(); });
+        if (count($logEntries) == 0) {
+            return null;
+        }
+        usort(
+            $logEntries,
+            function ($a, $b) {
+                return $a->getDateLogged() > $b->getDateLogged();
+            }
+        );
         return reset($logEntries)->getUserId();
     }
 
@@ -91,7 +100,9 @@ class ReviewAssignment extends AbstractDataObjectMapper {
      */
     protected static function getReviewFormSourceRecordKey($dataObject)
     {
-        if(is_null($dataObject->getReviewFormId())) return null;
+        if (is_null($dataObject->getReviewFormId())) {
+            return null;
+        }
         return (object)['source_record_key' => SourceRecordKey::reviewForm($dataObject->getReviewFormId())];
     }
 
@@ -139,8 +150,11 @@ class ReviewAssignment extends AbstractDataObjectMapper {
      * @param $reviewAssignment
      * @return float|int|null
      */
-    protected static function getQualityText($reviewAssignment) {
-        if(is_null($reviewAssignment->getQuality())) return null;
+    protected static function getQualityText($reviewAssignment)
+    {
+        if (is_null($reviewAssignment->getQuality())) {
+            return null;
+        }
         return $reviewAssignment->getQuality() * 20;
     }
 }

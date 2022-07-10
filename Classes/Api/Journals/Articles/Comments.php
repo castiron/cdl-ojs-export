@@ -1,9 +1,11 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 
-class Comments extends ApiRoute  {
+class Comments extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $articleCommentRepository;
@@ -19,8 +21,11 @@ class Comments extends ApiRoute  {
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
         $comments = $this->articleCommentRepository->fetchByArticle($article);
 
-        return array_map(function($item) {
-            return NestedMapper::map($item);
-        }, $comments);
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item);
+            },
+            $comments
+        );
     }
 }

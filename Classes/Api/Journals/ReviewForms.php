@@ -1,10 +1,12 @@
-<?php namespace JournalTransporterPlugin\Api\Journals;
+<?php
+namespace JournalTransporterPlugin\Api\Journals;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class ReviewForms extends ApiRoute  {
+class ReviewForms extends ApiRoute
+{
     protected $journalRepository;
     protected $reviewFormRepository;
 
@@ -22,16 +24,23 @@ class ReviewForms extends ApiRoute  {
             $this->getReviewForms($journal);
     }
 
-    protected function getReviewForms($journal) {
+    protected function getReviewForms($journal)
+    {
         $resultSet = $this->reviewFormRepository->fetchByJournal($journal);
-        return array_map(function($item) {
-            return NestedMapper::map($item, 'index');
-        }, $resultSet->toArray());
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item, 'index');
+            },
+            $resultSet->toArray()
+        );
     }
 
-    protected function getReviewForm($id, $journal, $debug) {
+    protected function getReviewForm($id, $journal, $debug)
+    {
         $reviewForm = $this->reviewFormRepository->fetchOneById($id);
-        if($debug) return $this->getDebugResponse($reviewForm);
+        if ($debug) {
+            return $this->getDebugResponse($reviewForm);
+        }
         return NestedMapper::map($reviewForm);
     }
 
@@ -39,7 +48,8 @@ class ReviewForms extends ApiRoute  {
      * @param $article
      * @return object
      */
-    protected function getDebugResponse($reviewForm) {
+    protected function getDebugResponse($reviewForm)
+    {
         return $reviewForm;
     }
 }

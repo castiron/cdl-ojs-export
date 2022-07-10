@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 
-class SupplementaryFile {
+class SupplementaryFile
+{
     use Repository;
 
     /**
@@ -18,8 +20,10 @@ class SupplementaryFile {
     public function fetchByArticle($article)
     {
         $suppFiles = DAOFactory::get()->getDAO('suppFile')->getSuppFilesByArticle($article->getId());
-        foreach($suppFiles as &$suppFile) {
-            if(!is_null($suppFile->getRevision())) continue;
+        foreach ($suppFiles as &$suppFile) {
+            if (!is_null($suppFile->getRevision())) {
+                continue;
+            }
             $suppFile->_data['revision'] = self::extractRevisionFromFileName($suppFile->getFilename());
         }
 
@@ -32,7 +36,7 @@ class SupplementaryFile {
      */
     public static function extractRevisionFromFileName($filename)
     {
-        list(,, $revision) = explode('-', $filename);
-        return (int) $revision;
+        list(, , $revision) = explode('-', $filename);
+        return (int)$revision;
     }
 }

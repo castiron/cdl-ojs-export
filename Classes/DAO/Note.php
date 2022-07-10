@@ -1,13 +1,16 @@
-<?php namespace JournalTransporterPlugin\DAO;
+<?php
+namespace JournalTransporterPlugin\DAO;
 
 import('classes.note.NoteDAO');
 import('classes.note.Note');
 
-class Note extends \NoteDAO {
+class Note extends \NoteDAO
+{
     /**
      * Constructor
      */
-    function __construct() {
+    function __construct()
+    {
         parent::NoteDAO();
     }
 
@@ -15,7 +18,8 @@ class Note extends \NoteDAO {
      * Construct a new data object corresponding to this DAO.
      * @return Note
      */
-    function newDataObject() {
+    function newDataObject()
+    {
         return new \Note;
     }
 
@@ -26,9 +30,12 @@ class Note extends \NoteDAO {
      * @param $userId int
      * @return object DAOResultFactory containing matching Note objects
      */
-    function getByAssoc($assocType, $assocId, $userId = null) {
-        $params = array((int) $assocId, (int) $assocType);
-        if (isset($userId)) $params[] = (int) $userId;
+    function getByAssoc($assocType, $assocId, $userId = null)
+    {
+        $params = array((int)$assocId, (int)$assocType);
+        if (isset($userId)) {
+            $params[] = (int)$userId;
+        }
 
         $sql = 'SELECT * FROM notes WHERE assoc_id = ? AND assoc_type = ?';
         if (isset($userId)) {

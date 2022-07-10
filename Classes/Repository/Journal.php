@@ -1,9 +1,11 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
 use JournalTransporterPlugin\Utility\Traits\DAOCache;
 use JournalTransporterPlugin\Exception\CannotFetchDataObjectException;
 
-class Journal {
+class Journal
+{
     use Repository;
 
     /**
@@ -24,17 +26,22 @@ class Journal {
      * @param $paths
      * @return array
      */
-    public function fetchByIdsAndPaths($ids, $paths) {
+    public function fetchByIdsAndPaths($ids, $paths)
+    {
         $journals = [];
 
-        foreach($ids as $id) {
+        foreach ($ids as $id) {
             $journal = $this->getJournal($id);
-            if($journal) $journals[] = $journal;
+            if ($journal) {
+                $journals[] = $journal;
+            }
         }
 
-        foreach($paths as $path) {
+        foreach ($paths as $path) {
             $journal = $this->getJournalByPath($path);
-            if($journal) $journals[] = $journal;
+            if ($journal) {
+                $journals[] = $journal;
+            }
         }
 
         return $journals;
@@ -48,13 +55,15 @@ class Journal {
      */
     public function fetchOneById($id)
     {
-        if(preg_match('/^[0-9]+$/', $id)) {
+        if (preg_match('/^[0-9]+$/', $id)) {
             $journal = $this->getJournal($id);
         } else {
             $journal = $this->getJournalByPath($id);
         }
 
-        if(is_null($journal)) throw new CannotFetchDataObjectException("Journal $id not found");
+        if (is_null($journal)) {
+            throw new CannotFetchDataObjectException("Journal $id not found");
+        }
         return $journal;
     }
 

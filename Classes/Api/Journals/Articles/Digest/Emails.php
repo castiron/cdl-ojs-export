@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Api\Response;
@@ -10,7 +11,8 @@ use JournalTransporterPlugin\Utility\Date;
  * Class Emails
  * @package JournalTransporterPlugin\Api\Journals\Articles\Digest
  */
-class Emails extends ApiRoute {
+class Emails extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $articleEmailLogRepository;
@@ -23,13 +25,15 @@ class Emails extends ApiRoute {
     public function execute($args)
     {
         // If we need this elsewhere, abstract it
-        if(strlen($args['format']) > 0) {
-            if(!in_array($args['format'], ['txt', 'json'])) {
+        if (strlen($args['format']) > 0) {
+            if (!in_array($args['format'], ['txt', 'json'])) {
                 throw new InvalidRequestException("Format .{$args['format']} not allowed");
             } else {
                 $format = $args['format'];
             }
-        } else $format = 'json';
+        } else {
+            $format = 'json';
+        }
 
         $journal = $this->journalRepository->fetchOneById($args['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($args['article'], $journal);
@@ -37,24 +41,32 @@ class Emails extends ApiRoute {
         $articleEmailLogEntries = DataObject::resultSetToArray($resultSet);
 
         $emails = [];
-        foreach($articleEmailLogEntries as $articleEmailLogEntry) {
-            $emails[] = (object) [
-                'ip'        => $articleEmailLogEntry->iPAddress,
-                'from'      => $articleEmailLogEntry->from,
-                'to'        => $articleEmailLogEntry->recipients,
-                'cc'        => $articleEmailLogEntry->ccs,
-                'bcc'       => $articleEmailLogEntry->bccs,
-                'subject'   => $articleEmailLogEntry->subject,
-                'body'      => $articleEmailLogEntry->body,
-                'reference' => $articleEmailLogEntry->__class.':'.$articleEmailLogEntry->id,
-                'datetime'  => Date::formatDateString($articleEmailLogEntry->dateSent)
+        foreach ($articleEmailLogEntries as $articleEmailLogEntry) {
+            $emails[] = (object)[
+                'ip' => $articleEmailLogEntry->iPAddress,
+                'from' => $articleEmailLogEntry->from,
+                'to' => $articleEmailLogEntry->recipients,
+                'cc' => $articleEmailLogEntry->ccs,
+                'bcc' => $articleEmailLogEntry->bccs,
+                'subject' => $articleEmailLogEntry->subject,
+                'body' => $articleEmailLogEntry->body,
+                'reference' => $articleEmailLogEntry->__class . ':' . $articleEmailLogEntry->id,
+                'datetime' => Date::formatDateString($articleEmailLogEntry->dateSent)
             ];
         }
 
-        usort($emails, function($a, $b) { return $a->datetime < $b->datetime ? -1 : 1; });
+        usort(
+            $emails,
+            function ($a, $b) {
+                return $a->datetime < $b->datetime ? -1 : 1;
+            }
+        );
 
-        if($format === 'json') return $emails;
-        else return $this->formatAsText($emails);
+        if ($format === 'json') {
+            return $emails;
+        } else {
+            return $this->formatAsText($emails);
+        }
     }
 
     /**
@@ -65,7 +77,7 @@ class Emails extends ApiRoute {
     {
         $digest = [];
 
-        foreach($emails as $email) {
+        foreach ($emails as $email) {
             $digest[] = "
 Sent At:   {$email->datetime}
 Reference: {$email->reference}
@@ -78,7 +90,7 @@ Subject:   {$email->subject}
 {$email->body}
 ";
         }
-        $separator = "\n\n".str_repeat('=', 80)."\n\n";
+        $separator = "\n\n" . str_repeat('=', 80) . "\n\n";
 
         $string = wordwrap(implode($separator, $digest), 80);
 

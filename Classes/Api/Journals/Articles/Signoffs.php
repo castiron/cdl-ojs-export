@@ -1,10 +1,12 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class Signoffs extends ApiRoute  {
+class Signoffs extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $signoffRepository;
@@ -21,10 +23,15 @@ class Signoffs extends ApiRoute  {
 
         $signoffs = $this->signoffRepository->fetchByArticle($article)->toArray();
 
-        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::dataObjectToArray($signoffs);
-        return array_map(function($item) {
-            return NestedMapper::map($item);
-        }, $signoffs);
+        if ($arguments[ApiRoute::DEBUG_ARGUMENT]) {
+            return DataObject::dataObjectToArray($signoffs);
+        }
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item);
+            },
+            $signoffs
+        );
     }
 
 }

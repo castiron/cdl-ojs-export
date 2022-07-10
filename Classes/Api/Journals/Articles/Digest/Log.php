@@ -1,9 +1,11 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
 use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Api\ApiRoute;
 
-class Log extends ApiRoute {
+class Log extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $articleEventLogRepository;

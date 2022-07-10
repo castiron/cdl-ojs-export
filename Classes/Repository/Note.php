@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
-class Note {
+class Note
+{
     use Repository;
 
     /**
@@ -13,7 +15,8 @@ class Note {
      * @param null $round
      * @return mixed
      */
-    public function fetchByReviewAssignment($reviewAssignment) {
+    public function fetchByReviewAssignment($reviewAssignment)
+    {
         return $this->getByAssoc(257, 54515)->toArray();
     }
 }

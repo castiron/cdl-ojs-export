@@ -1,3 +1,6 @@
-<?php namespace JournalTransporterPlugin\Exception;
+<?php
+namespace JournalTransporterPlugin\Exception;
 
-class InvalidArgumentException extends PluginException {}
+class InvalidArgumentException extends PluginException
+{
+}

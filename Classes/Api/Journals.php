@@ -1,9 +1,11 @@
-<?php namespace JournalTransporterPlugin\Api;
+<?php
+namespace JournalTransporterPlugin\Api;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class Journals extends ApiRoute {
+class Journals extends ApiRoute
+{
     protected $journalRepository;
 
     const JOURNALS_ID_FILTER_ARGUMENT = 'ids';
@@ -11,7 +13,7 @@ class Journals extends ApiRoute {
 
     public function execute($parameters, $arguments)
     {
-        if(@$parameters['journal']) {
+        if (@$parameters['journal']) {
             return $this->getJournal($parameters['journal'], $arguments[ApiRoute::DEBUG_ARGUMENT]);
         } else {
             return $this->getJournals($this->validArguments($arguments));
@@ -26,7 +28,9 @@ class Journals extends ApiRoute {
     protected function getJournal($id, $debug)
     {
         $item = $this->journalRepository->fetchOneById($id);
-        if($debug) return DataObject::dataObjectToArray($item);
+        if ($debug) {
+            return DataObject::dataObjectToArray($item);
+        }
         return NestedMapper::map($item);
     }
 
@@ -35,7 +39,7 @@ class Journals extends ApiRoute {
      */
     protected function getJournals($arguments)
     {
-        if(count($arguments) > 0) {
+        if (count($arguments) > 0) {
             $journals = $this->journalRepository->fetchByIdsAndPaths(
                 $arguments[self::JOURNALS_ID_FILTER_ARGUMENT],
                 $arguments[self::JOURNALS_PATH_FILTER_ARGUMENT]
@@ -44,9 +48,12 @@ class Journals extends ApiRoute {
             $journals = $this->journalRepository->fetchAll($arguments)->toArray();
         }
 
-        return array_map(function($item) {
-            return NestedMapper::map($item, 'list');
-        }, $journals);
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item, 'list');
+            },
+            $journals
+        );
     }
 
     /**
@@ -57,27 +64,42 @@ class Journals extends ApiRoute {
      *
      * @param $arguments
      */
-    protected function validArguments($arguments) {
+    protected function validArguments($arguments)
+    {
         $out = [];
 
-        $ids = array_unique(array_filter(array_map('trim',
-            explode(',', @$arguments[self::JOURNALS_ID_FILTER_ARGUMENT]))));
+        $ids = array_unique(
+            array_filter(
+                array_map(
+                    'trim',
+                    explode(',', @$arguments[self::JOURNALS_ID_FILTER_ARGUMENT])
+                )
+            )
+        );
 
-        foreach($ids as $id) {
-            if(ctype_digit($id)) {
-                if(!array_key_exists(self::JOURNALS_ID_FILTER_ARGUMENT, $out))
+        foreach ($ids as $id) {
+            if (ctype_digit($id)) {
+                if (!array_key_exists(self::JOURNALS_ID_FILTER_ARGUMENT, $out)) {
                     $out[self::JOURNALS_ID_FILTER_ARGUMENT] = [];
+                }
                 $out[self::JOURNALS_ID_FILTER_ARGUMENT][] = $id;
             }
         }
 
-        $paths = array_unique(array_filter(array_map('trim',
-            explode(',', @$arguments[self::JOURNALS_PATH_FILTER_ARGUMENT]))));
+        $paths = array_unique(
+            array_filter(
+                array_map(
+                    'trim',
+                    explode(',', @$arguments[self::JOURNALS_PATH_FILTER_ARGUMENT])
+                )
+            )
+        );
 
-        foreach($paths as $path) {
-            if(preg_match('/^[0-9a-z_]+$/', $path)) {
-                if(!array_key_exists(self::JOURNALS_PATH_FILTER_ARGUMENT, $out))
+        foreach ($paths as $path) {
+            if (preg_match('/^[0-9a-z_]+$/', $path)) {
+                if (!array_key_exists(self::JOURNALS_PATH_FILTER_ARGUMENT, $out)) {
                     $out[self::JOURNALS_PATH_FILTER_ARGUMENT] = [];
+                }
                 $out[self::JOURNALS_PATH_FILTER_ARGUMENT][] = $path;
             }
         }

@@ -1,10 +1,12 @@
-<?php namespace JournalTransporterPlugin\Api\Journals;
+<?php
+namespace JournalTransporterPlugin\Api\Journals;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Api\ApiRoute;
 
-class Articles extends ApiRoute  {
+class Articles extends ApiRoute
+{
     protected $journalRepository;
     protected $articleRepository;
     protected $authorSubmissionRepository;
@@ -30,9 +32,12 @@ class Articles extends ApiRoute  {
     protected function getArticles($journal)
     {
         $resultSet = $this->articleRepository->fetchByJournal($journal);
-        return array_map(function($item) {
-            return NestedMapper::map($item, 'index');
-        }, $resultSet->toArray());
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item, 'index');
+            },
+            $resultSet->toArray()
+        );
     }
 
     /**
@@ -44,7 +49,9 @@ class Articles extends ApiRoute  {
     protected function getArticle($id, $journal, $debug)
     {
         $article = $this->articleRepository->fetchByIdAndJournal($id, $journal);
-        if($debug) return $this->getDebugResponse($article);
+        if ($debug) {
+            return $this->getDebugResponse($article);
+        }
         return NestedMapper::map($article);
     }
 
@@ -52,8 +59,9 @@ class Articles extends ApiRoute  {
      * @param $article
      * @return object
      */
-    protected function getDebugResponse($article) {
-        return (object) [
+    protected function getDebugResponse($article)
+    {
+        return (object)[
             'article' => DataObject::dataObjectToArray($article),
             'authorSubmission' => DataObject::dataObjectToArray(
                 $this->authorSubmissionRepository->fetchByArticle($article)

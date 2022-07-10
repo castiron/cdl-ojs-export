@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
-class Signoff {
+class Signoff
+{
     use Repository;
 
     /**

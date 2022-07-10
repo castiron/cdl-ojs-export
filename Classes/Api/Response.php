@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Api;
+<?php
+namespace JournalTransporterPlugin\Api;
 
-class Response {
+class Response
+{
     /**
      * @var mixed
      */

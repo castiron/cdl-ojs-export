@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php
+namespace JournalTransporterPlugin\Utility;
 
-class Str {
+class Str
+{
     /**
      *
      */
@@ -12,7 +14,9 @@ class Str {
      */
     public static function camelToSnake($str)
     {
-        if(array_key_exists($str, self::CAMEL_TO_SNAKE_EXCEPTIONS)) return self::CAMEL_TO_SNAKE_EXCEPTIONS[$str];
+        if (array_key_exists($str, self::CAMEL_TO_SNAKE_EXCEPTIONS)) {
+            return self::CAMEL_TO_SNAKE_EXCEPTIONS[$str];
+        }
 
         if (empty($str)) {
             return $str;

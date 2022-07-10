@@ -1,4 +1,5 @@
-<?php namespace JournalTransporterPlugin\Utility\Enums;
+<?php
+namespace JournalTransporterPlugin\Utility\Enums;
 
 import('classes.article.ArticleComment');
 
@@ -20,7 +21,8 @@ class CommentType
      * @param $route
      * @return string
      */
-    static public function getCommentTypeName($commentTypeId) {
+    static public function getCommentTypeName($commentTypeId)
+    {
         return @self::$mapping[$commentTypeId] ?: null;
     }
 }

@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Repository;
+<?php
+namespace JournalTransporterPlugin\Repository;
 
-class LayoutEditorSubmission {
+class LayoutEditorSubmission
+{
     use Repository;
 
     /**

@@ -1,15 +1,18 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php
+namespace JournalTransporterPlugin\Utility;
 
-class DataObject {
+class DataObject
+{
     /**
      * Given a resultSet returns an array of data objects cast as arrays
      * @param $resultSet
      * @return array|array[]|\stdClass[]
      */
-    public static function resultSetToArray($resultSet, $exclude = ['allData']) {
+    public static function resultSetToArray($resultSet, $exclude = ['allData'])
+    {
         return array_map(
-            function($dataObject) use($exclude) {
-              return DataObject::dataObjectToArray($dataObject, $exclude);
+            function ($dataObject) use ($exclude) {
+                return DataObject::dataObjectToArray($dataObject, $exclude);
             },
             $resultSet->toArray()
         );
@@ -21,17 +24,20 @@ class DataObject {
      * @param $dataObject
      * @return mixed
      */
-    public static function dataObjectToArray($dataObject, $exclude = ['allData']) {
-        if(is_object($dataObject) && is_subclass_of($dataObject, 'DataObject')) {
+    public static function dataObjectToArray($dataObject, $exclude = ['allData'])
+    {
+        if (is_object($dataObject) && is_subclass_of($dataObject, 'DataObject')) {
             $out = new \stdClass;
             $out->__class = get_class($dataObject);
-            foreach(self::getGetters($dataObject) as $method) {
+            foreach (self::getGetters($dataObject) as $method) {
                 $key = self::stripGetFromGetter($method);
                 $output = $dataObject->$method();
-                if(!in_array($key, $exclude)) $out->$key = self::dataObjectToArray($output);
+                if (!in_array($key, $exclude)) {
+                    $out->$key = self::dataObjectToArray($output);
+                }
             }
             return $out;
-        } elseif(is_array($dataObject)) {
+        } elseif (is_array($dataObject)) {
             $out = [];
             foreach ($dataObject as $k => $v) {
                 $out[$k] = self::dataObjectToArray($v);
@@ -48,8 +54,9 @@ class DataObject {
      * @param string $methodName
      * @return string
      */
-    public static function stripGetFromGetter(string $methodName) {
-        if(substr($methodName, 0, 3) === 'get') {
+    public static function stripGetFromGetter(string $methodName)
+    {
+        if (substr($methodName, 0, 3) === 'get') {
             return strtolower($methodName[3]) . substr($methodName, 4);
         }
         return $methodName;
@@ -61,12 +68,15 @@ class DataObject {
      * @param object $instance
      * @return mixed
      */
-    public static function getGetters(object $instance) {
+    public static function getGetters(object $instance)
+    {
         $class = get_class($instance);
         return array_filter(
             get_class_methods($instance),
-            function($methodName) use($class) {
-                if(substr($methodName, 0, 3) !== 'get') return false;
+            function ($methodName) use ($class) {
+                if (substr($methodName, 0, 3) !== 'get') {
+                    return false;
+                }
                 $methodReflection = new \ReflectionMethod($class, $methodName);
                 return count($methodReflection->getParameters()) === 0;
             }
@@ -87,8 +97,14 @@ class DataObject {
      * @param false $disableDebugStats
      * @return mixed
      */
-    public static function mergeWithoutRedundancy($a, $b, $propertyName, $forceFullMerge = false, $disableDebugStats = false) {
-        if(gettype($b) !== 'object' || $forceFullMerge) {
+    public static function mergeWithoutRedundancy(
+        $a,
+        $b,
+        $propertyName,
+        $forceFullMerge = false,
+        $disableDebugStats = false
+    ) {
+        if (gettype($b) !== 'object' || $forceFullMerge) {
             $supplemental = $b;
         } else {
             $differentValues = [];
@@ -109,12 +125,12 @@ class DataObject {
                     $uniqueProperties[] = $property;
                 }
             }
-            if(!$disableDebugStats) {
+            if (!$disableDebugStats) {
                 asort($differentValues);
                 asort($duplicates);
                 asort($uniqueProperties);
 
-                $supplemental->__mergeWithoutRedundancyStats = (object) [
+                $supplemental->__mergeWithoutRedundancyStats = (object)[
                     '__differentValues' => implode(', ', $differentValues),
                     '__duplicates' => implode(', ', $duplicates),
                     '__uniqueProperties' => implode(', ', $uniqueProperties)
@@ -129,7 +145,8 @@ class DataObject {
      * @param $object
      * @return mixed
      */
-    public static function isDataObject($object) {
+    public static function isDataObject($object)
+    {
         return is_subclass_of($object, 'DataObject');
     }
 
@@ -137,7 +154,8 @@ class DataObject {
      * @param $object
      * @return mixed
      */
-    public static function isResultSet($object) {
+    public static function isResultSet($object)
+    {
         return get_class($object) == 'DAOResultFactory';
     }
 }

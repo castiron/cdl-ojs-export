@@ -1,9 +1,11 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 use Config;
 
-class Journal extends AbstractDataObjectMapper {
+class Journal extends AbstractDataObjectMapper
+{
     protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'path']]];
 
     protected static $mapping = [
@@ -31,9 +33,10 @@ class Journal extends AbstractDataObjectMapper {
      * @param $context
      * @return mixed
      */
-    protected static function preMap($dataObject, $context) {
+    protected static function preMap($dataObject, $context)
+    {
         $dataObject->header = self::getImage($dataObject, 'pageHeaderTitleImage');
-        $dataObject->logo  = self::getImage($dataObject, 'pageHeaderLogoImage');
+        $dataObject->logo = self::getImage($dataObject, 'pageHeaderLogoImage');
         return $dataObject;
     }
 
@@ -43,15 +46,18 @@ class Journal extends AbstractDataObjectMapper {
      * @param $settingKey
      * @return mixed|null
      */
-    protected static function getImage($dataObject, $settingKey) {
+    protected static function getImage($dataObject, $settingKey)
+    {
         $imageData = @$dataObject->getSettings()[$settingKey]['en_US'];
-        if($imageData) {
+        if ($imageData) {
             $imageUrl =
                 Config::getVar('general', 'base_url') .
                 Config::getVar('files', 'public_files_dir') .
                 '/journals/' . $dataObject->getId() . '/' . $imageData['uploadName'];
             $imageData['url'] = $imageUrl;
-            return (object) $imageData;
-        } else return null;
+            return (object)$imageData;
+        } else {
+            return null;
+        }
     }
 }

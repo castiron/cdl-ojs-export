@@ -1,6 +1,8 @@
-<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
+<?php
+namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-class User extends AbstractDataObjectMapper {
+class User extends AbstractDataObjectMapper
+{
     protected static $contexts = ['roles' => ['exclude' => '*', 'include' => ['sourceRecordKey']]];
 
     protected static $mapping = [

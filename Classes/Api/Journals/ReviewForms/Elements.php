@@ -1,10 +1,12 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\ReviewForms;
+<?php
+namespace JournalTransporterPlugin\Api\Journals\ReviewForms;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class Elements extends ApiRoute  {
+class Elements extends ApiRoute
+{
     protected $journalRepository;
     protected $reviewFormRepository;
     protected $reviewFormElementRepository;
@@ -20,21 +22,32 @@ class Elements extends ApiRoute  {
         $reviewForm = $this->reviewFormRepository->fetchOneById($parameters['review_form'], $journal);
 
         return @$parameters['review_form_element'] ?
-            $this->getReviewFormElement($parameters['review_form_element'], $reviewForm, $arguments[ApiRoute::DEBUG_ARGUMENT]) :
+            $this->getReviewFormElement(
+                $parameters['review_form_element'],
+                $reviewForm,
+                $arguments[ApiRoute::DEBUG_ARGUMENT]
+            ) :
             $this->getReviewFormElements($reviewForm);
     }
 
-    protected function getReviewFormElements($reviewForm) {
+    protected function getReviewFormElements($reviewForm)
+    {
         $reviewFormElements = $this->reviewFormElementRepository->fetchByReviewForm($reviewForm);
 
-        return array_map(function($item) {
-            return NestedMapper::map($item, 'index');
-        }, array_values($reviewFormElements));
+        return array_map(
+            function ($item) {
+                return NestedMapper::map($item, 'index');
+            },
+            array_values($reviewFormElements)
+        );
     }
 
-    protected function getReviewFormElement($id, $reviewForm, $debug) {
+    protected function getReviewFormElement($id, $reviewForm, $debug)
+    {
         $reviewFormElement = $this->reviewFormElementRepository->fetchOneById($id);
-        if($debug) return $this->getDebugResponse($reviewFormElement);
+        if ($debug) {
+            return $this->getDebugResponse($reviewFormElement);
+        }
         return NestedMapper::map($reviewFormElement);
     }
 
@@ -42,7 +55,8 @@ class Elements extends ApiRoute  {
      * @param $article
      * @return object
      */
-    protected function getDebugResponse($reviewFormElement) {
+    protected function getDebugResponse($reviewFormElement)
+    {
         return $reviewFormElement;
     }
 }

@@ -1,8 +1,10 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php
+namespace JournalTransporterPlugin\Utility;
 
 use \DAORegistry;
 
-class DAOFactory {
+class DAOFactory
+{
     /**
      * @var null
      */
@@ -16,13 +18,15 @@ class DAOFactory {
     /**
      * DAOFactory constructor.
      */
-    protected function __construct() {
+    protected function __construct()
+    {
     }
 
     /**
      * @return \JournalTransporterPlugin\Utility\DAOFactory
      */
-    public function get() {
+    public function get()
+    {
         return self::$instance === null ? new self : self::instance;
     }
 
@@ -30,11 +34,12 @@ class DAOFactory {
      * @param $daoName
      * @return mixed
      */
-    public function getDAO($daoName) {
+    public function getDAO($daoName)
+    {
         $ucDaoName = ucwords($daoName);
-        if(!array_key_exists($ucDaoName, $this->DAOInstances)) {
-            $inheritedClassName = 'JournalTransporterPlugin\\DAO\\'.$ucDaoName;
-            if(class_exists($inheritedClassName)) {
+        if (!array_key_exists($ucDaoName, $this->DAOInstances)) {
+            $inheritedClassName = 'JournalTransporterPlugin\\DAO\\' . $ucDaoName;
+            if (class_exists($inheritedClassName)) {
                 $this->DAOInstances[$ucDaoName] = new $inheritedClassName;
             } else {
                 // This function will fatal error if the DAO isn't registered. Fine.
