@@ -2,18 +2,20 @@
 namespace JournalTransporterPlugin\Api\Journals\Articles\Synthetics;
 
 use JournalTransporterPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\Journal;
 
 class History extends ApiRoute
 {
-    protected $journalRepository;
-    protected $articleRepository;
+    protected Journal $journalRepository;
+    protected Article $articleRepository;
 
     /**
      * @param array $args
      * @return array
      * @throws \Exception
      */
-    public function execute($args)
+    public function execute(array $args): array
     {
         $journal = $this->journalRepository->fetchOneById($args['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($args['article'], $journal);

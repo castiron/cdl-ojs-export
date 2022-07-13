@@ -6,7 +6,12 @@ class Files extends ApiRoute
     protected $fileRepository;
     protected $articleRepository;
 
-    public function execute($parameters, $arguments)
+    /**
+     * @return never
+     *
+     * @psalm-param array{article: mixed, file: mixed} $parameters
+     */
+    public function execute(array $parameters, $arguments)
     {
         list($fileId, $revision) = explode('-', $parameters['file']);
 

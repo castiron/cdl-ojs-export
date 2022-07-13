@@ -96,9 +96,12 @@ class ReviewAssignment extends AbstractDataObjectMapper
 
     /**
      * @param $dataObject
-     * @return object
+     *
+     * @return null|object
+     *
+     * @psalm-return null|object{source_record_key:string}
      */
-    protected static function getReviewFormSourceRecordKey($dataObject)
+    protected static function getReviewFormSourceRecordKey($dataObject): ?object
     {
         if (is_null($dataObject->getReviewFormId())) {
             return null;

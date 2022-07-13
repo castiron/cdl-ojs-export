@@ -12,7 +12,7 @@ class Str
      * @param $str
      * @return mixed|string
      */
-    public static function camelToSnake($str)
+    public static function camelToSnake(string $str)
     {
         if (array_key_exists($str, self::CAMEL_TO_SNAKE_EXCEPTIONS)) {
             return self::CAMEL_TO_SNAKE_EXCEPTIONS[$str];

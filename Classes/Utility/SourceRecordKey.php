@@ -79,11 +79,15 @@ class SourceRecordKey
 
     /**
      * Not a real class in OJS
+     *
      * @param $articleId
      * @param $round
+     *
      * @return string
+     *
+     * @psalm-param positive-int $round
      */
-    static public function round($articleId, $round)
+    static public function round($articleId, int $round)
     {
         return 'ReviewRound:' . $articleId . ':' . $round;
     }

@@ -3,24 +3,29 @@ namespace JournalTransporterPlugin\Api\Journals\Articles\Rounds\ReviewAssignment
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\Journal;
+use JournalTransporterPlugin\Repository\ReviewAssignment;
+use JournalTransporterPlugin\Repository\ReviewFormElement;
+use JournalTransporterPlugin\Repository\ReviewFormResponse;
 use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Utility\HTML;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class FormResponses extends ApiRoute
 {
-    protected $journalRepository;
-    protected $articleRepository;
-    protected $reviewAssignmentRepository;
-    protected $reviewFormResponseRepository;
-    protected $reviewFormElementRepository;
+    protected Journal $journalRepository;
+    protected Article $articleRepository;
+    protected ReviewAssignment $reviewAssignmentRepository;
+    protected ReviewFormResponse $reviewFormResponseRepository;
+    protected ReviewFormElement $reviewFormElementRepository;
 
     /**
      * @param array $parameters
      * @return array
      * @throws \Exception
      */
-    public function execute($parameters, $arguments)
+    public function execute(arary $parameters, array $arguments): array
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
@@ -53,9 +58,13 @@ class FormResponses extends ApiRoute
     /**
      * @param $formElementId
      * @param $responseValue
+     * @param int $index
+     *
      * @return object
+     *
+     * @psalm-param 0|positive-int $index
      */
-    protected function formatResponse($reviewAssignment, $formElementId, $responseData, $index)
+    protected function formatResponse(\ReviewAssignment $reviewAssignment, int $formElementId, mixed $responseData, int $index): object
     {
         $reviewFormElement = $this->reviewFormElementRepository->fetchOneById($formElementId);
 
@@ -91,7 +100,7 @@ class FormResponses extends ApiRoute
         }
 
         // To show form element, remove 'sourceRecordKey' value from the reviewFormElement to just a sourceRecordKey
-        return (object)[
+        return (object) [
             'source_record_key' => SourceRecordKey::reviewAssignmentResponse($reviewAssignment->getId(), $index),
             'review_form_element' => NestedMapper::map($reviewFormElement, 'sourceRecordKey'),
             'response_value' => $responseOutputValue

@@ -4,22 +4,27 @@ namespace JournalTransporterPlugin\Api\Journals\Articles;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Exception\CannotFetchDataObjectException;
+use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\ArticleComment;
+use JournalTransporterPlugin\Repository\EditorSubmission;
+use JournalTransporterPlugin\Repository\Journal;
 use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\Enums\Role;
 
 class RevisionRequests extends ApiRoute
 {
-    protected $journalRepository;
-    protected $articleRepository;
-    protected $editorSubmissionRepository;
-    protected $articleCommentRepository;
+    protected Journal $journalRepository;
+    protected Article $articleRepository;
+    protected EditorSubmission $editorSubmissionRepository;
+    protected ArticleComment $articleCommentRepository;
 
     /**
      * @param array $parameters
+     * @param array $arguments
      * @return array
      * @throws \Exception
      */
-    public function execute($parameters, $arguments)
+    public function execute(array $parameters, array $arguments): array
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
@@ -30,10 +35,10 @@ class RevisionRequests extends ApiRoute
     }
 
     /**
-     * @param $article
+     * @param \Article $article
      * @return array
      */
-    protected function getRevisionRequests($article)
+    protected function getRevisionRequests(\Article $article): array
     {
         $decisions = $this->editorSubmissionRepository->fetchEditorDecisionsByArticle($article);
 
@@ -82,11 +87,15 @@ class RevisionRequests extends ApiRoute
 
     /**
      * Iterate the decisions, and find the start and end datetimes for the comments we want
+     *
      * @param $decisions
      * @param $requestedDecision
-     * @return null[]
+     *
+     * @return (\DateTime|null)[]
+     *
+     * @psalm-return array{0: \DateTime|null, 1: \DateTime|null}
      */
-    protected function determineCommentWindow($decisions, $requestedDecision)
+    protected function determineCommentWindow($decisions, $requestedDecision): array
     {
         $commentsStart = null;
         $commentsEnd = null;
@@ -111,9 +120,12 @@ class RevisionRequests extends ApiRoute
      * @param $article
      * @param $commentsStart
      * @param $commentsEnd
+     * @param \DateTime|null $commentsStart
+     * @param \DateTime|null $commentsEnd
+     *
      * @return mixed
      */
-    protected function fetchEditorCommentsWithinRange($article, $commentsStart, $commentsEnd)
+    protected function fetchEditorCommentsWithinRange($article, ?\DateTime $commentsStart, ?\DateTime $commentsEnd)
     {
         $allComments = $this->articleCommentRepository->fetchEditorCommentsByArticle($article);
         $comments = array_filter(

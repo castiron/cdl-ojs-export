@@ -34,7 +34,7 @@ class DAOFactory
      * @param $daoName
      * @return mixed
      */
-    public function getDAO($daoName)
+    public function getDAO(string $daoName)
     {
         $ucDaoName = ucwords($daoName);
         if (!array_key_exists($ucDaoName, $this->DAOInstances)) {

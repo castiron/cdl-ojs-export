@@ -95,7 +95,12 @@ class Article extends AbstractDataObjectMapper
 
     /**
      * TODO: Might want to move this out of the Mapper class into Repository
+     *
      * @param $dataObject
+     *
+     * @return array|object
+     *
+     * @psalm-return array<empty, empty>|object
      */
     protected static function getMostRecentEditorDecision($dataObject)
     {
@@ -150,8 +155,10 @@ class Article extends AbstractDataObjectMapper
 
     /**
      * @param $status
+     *
+     * @return null|string
      */
-    protected static function getUnpublishedArticleStatus($dataObject)
+    protected static function getUnpublishedArticleStatus($dataObject): ?string
     {
         $status = $dataObject->getStatus();
 

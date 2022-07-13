@@ -42,7 +42,7 @@ class Sections extends ApiRoute
      * @param $parameters
      * @return array
      */
-    public function getSections($parameters)
+    public function getSections(array $parameters)
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $resultSet = $this->sectionRepository->fetchByJournal($journal);

@@ -7,7 +7,14 @@ namespace JournalTransporterPlugin\Builder\Mapper;
  */
 class NestedMapper
 {
-    public static function map($mappable, $context = null, $placeholder = false)
+    /**
+     * @param null|string $context
+     * @param mixed|object $mappable
+     *
+     * @psalm-param 'index'|'list'|'sourceRecordKey'|null $context
+     * @psalm-param T|object $mappable
+     */
+    public static function map($mappable, ?string $context = null, $placeholder = false)
     {
         if ($placeholder) {
             return "PLACEHOLDER";

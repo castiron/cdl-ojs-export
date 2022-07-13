@@ -3,7 +3,7 @@ namespace JournalTransporterPlugin\Utility;
 
 class HTML
 {
-    public static function cleanHtml($string)
+    public static function cleanHtml(string $string)
     {
         $steps = [$string];
         $steps[] = strip_tags(end($steps), '<p><ul><li><ol><em><i><strong>');

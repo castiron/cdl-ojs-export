@@ -56,7 +56,7 @@ class Issues extends ApiRoute
      * @param $parameters
      * @return array
      */
-    public function getIssues($parameters)
+    public function getIssues(array $parameters)
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $publishedIssues = $this->issueRepository->fetchPublishedByJournal($journal)->toArray();

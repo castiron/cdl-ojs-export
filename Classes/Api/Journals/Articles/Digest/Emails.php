@@ -3,6 +3,9 @@ namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Api\Response;
+use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\ArticleEmailLog;
+use JournalTransporterPlugin\Repository\Journal;
 use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Exception\InvalidRequestException;
 use JournalTransporterPlugin\Utility\Date;
@@ -13,16 +16,20 @@ use JournalTransporterPlugin\Utility\Date;
  */
 class Emails extends ApiRoute
 {
-    protected $journalRepository;
-    protected $articleRepository;
-    protected $articleEmailLogRepository;
+    protected Journal $journalRepository;
+    protected Article $articleRepository;
+    protected ArticleEmailLog $articleEmailLogRepository;
 
     /**
      * @param array $args
-     * @return array
+     *
+     * @return Response|object[]
+     *
      * @throws \Exception
+     *
+     * @psalm-return Response|list<object{ip:mixed, from:mixed, to:mixed, cc:mixed, bcc:mixed, subject:mixed, body:mixed, reference:string, datetime:string}>
      */
-    public function execute($args)
+    public function execute(array $args)
     {
         // If we need this elsewhere, abstract it
         if (strlen($args['format']) > 0) {
@@ -70,10 +77,13 @@ class Emails extends ApiRoute
     }
 
     /**
-     * @param $emails
+     * @param object[] $emails
+     *
      * @return Response
+     *
+     * @psalm-param list<object{ip:mixed, from:mixed, to:mixed, cc:mixed, bcc:mixed, subject:mixed, body:mixed, reference:string, datetime:string}> $emails
      */
-    protected function formatAsText($emails)
+    protected function formatAsText(array $emails)
     {
         $digest = [];
 

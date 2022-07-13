@@ -3,20 +3,24 @@ namespace JournalTransporterPlugin\Api\Journals\Articles;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\Journal;
+use JournalTransporterPlugin\Repository\Signoff;
 use JournalTransporterPlugin\Utility\DataObject;
 
 class Signoffs extends ApiRoute
 {
-    protected $journalRepository;
-    protected $articleRepository;
-    protected $signoffRepository;
+    protected Journal $journalRepository;
+    protected Article $articleRepository;
+    protected Signoff $signoffRepository;
 
     /**
      * @param array $parameters
+     * @param array $arguments
      * @return array
      * @throws \Exception
      */
-    public function execute($parameters, $arguments)
+    public function execute(array $parameters, array $arguments): array
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);

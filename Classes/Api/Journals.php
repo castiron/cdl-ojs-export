@@ -36,8 +36,12 @@ class Journals extends ApiRoute
 
     /**
      * @return array
+     *
+     * @param (mixed|string[])[] $arguments
+     *
+     * @psalm-param array{ids?: list<string>, paths?: list<string>|mixed} $arguments
      */
-    protected function getJournals($arguments)
+    protected function getJournals(array $arguments)
     {
         if (count($arguments) > 0) {
             $journals = $this->journalRepository->fetchByIdsAndPaths(
@@ -63,8 +67,12 @@ class Journals extends ApiRoute
      * Note that we're exploding comma lists into arrays.
      *
      * @param $arguments
+     *
+     * @return (mixed|string[])[]
+     *
+     * @psalm-return array{ids?: list<string>, paths?: list<string>|mixed}
      */
-    protected function validArguments($arguments)
+    protected function validArguments($arguments): array
     {
         $out = [];
 

@@ -25,10 +25,12 @@ class Discipline
 
     /**
      * Turn a comment type integer into a label
+     *
      * @param $route
-     * @return string
+     *
+     * @return null|string
      */
-    static public function getDisciplineName($disciplineKey)
+    static public function getDisciplineName($disciplineKey): ?string
     {
         return @self::$mapping[$disciplineKey] ?: null;
     }

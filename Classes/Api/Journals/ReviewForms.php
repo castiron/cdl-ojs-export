@@ -24,7 +24,7 @@ class ReviewForms extends ApiRoute
             $this->getReviewForms($journal);
     }
 
-    protected function getReviewForms($journal)
+    protected function getReviewForms($journal): array
     {
         $resultSet = $this->reviewFormRepository->fetchByJournal($journal);
         return array_map(

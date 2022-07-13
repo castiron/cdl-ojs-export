@@ -20,8 +20,11 @@ class Response
 
     /**
      * @param $payload
+     * @param ((int|string)[]|string)[]|string $payload
+     *
+     * @psalm-param array{exception: string, route_regexes: list<array-key>}|string $payload
      */
-    public function setPayload($payload)
+    public function setPayload($payload): void
     {
         $this->payload = $payload;
     }
@@ -36,8 +39,10 @@ class Response
 
     /**
      * @param $contentType
+     *
+     * @psalm-param 'text/plain' $contentType
      */
-    public function setContentType($contentType)
+    public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
     }
@@ -52,8 +57,11 @@ class Response
 
     /**
      * @param $responseCode
+     * @param int|string $responseCode
+     *
+     * @psalm-param '404'|'500'|500 $responseCode
      */
-    public function setResponseCode($responseCode)
+    public function setResponseCode($responseCode): void
     {
         $this->responseCode = $responseCode;
     }

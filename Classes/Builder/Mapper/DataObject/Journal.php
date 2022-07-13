@@ -41,12 +41,14 @@ class Journal extends AbstractDataObjectMapper
     }
 
     /**
-     *
      * @param $dataObject
      * @param $settingKey
+     *
      * @return mixed|null
+     *
+     * @psalm-param 'pageHeaderLogoImage'|'pageHeaderTitleImage' $settingKey
      */
-    protected static function getImage($dataObject, $settingKey)
+    protected static function getImage($dataObject, string $settingKey)
     {
         $imageData = @$dataObject->getSettings()[$settingKey]['en_US'];
         if ($imageData) {

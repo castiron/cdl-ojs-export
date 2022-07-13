@@ -30,7 +30,7 @@ class Elements extends ApiRoute
             $this->getReviewFormElements($reviewForm);
     }
 
-    protected function getReviewFormElements($reviewForm)
+    protected function getReviewFormElements($reviewForm): array
     {
         $reviewFormElements = $this->reviewFormElementRepository->fetchByReviewForm($reviewForm);
 

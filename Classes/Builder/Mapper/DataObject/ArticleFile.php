@@ -114,9 +114,10 @@ class ArticleFile extends AbstractDataObjectMapper
 
     /**
      * @param $dataObject
-     * @return string
+     *
+     * @return null|string
      */
-    protected static function getParentSourceRecordKey($dataObject)
+    protected static function getParentSourceRecordKey($dataObject): ?string
     {
         $revision = $dataObject->getRevision();
         if ($revision <= 1) {
@@ -140,9 +141,11 @@ class ArticleFile extends AbstractDataObjectMapper
 
     /**
      * @param $model
+     * @param get-class-of<$model> $modelName
+     *
      * @return string
      */
-    protected static function generateSourceRecordKey($modelName, $articleId, $fileId, $revision)
+    protected static function generateSourceRecordKey(string $modelName, $articleId, $fileId, $revision)
     {
         return $modelName . ':' . $articleId . ':' . $fileId . '-' . ($revision ?: '0');
     }

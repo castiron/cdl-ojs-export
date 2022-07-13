@@ -61,12 +61,12 @@ class History
         return null;
     }
 
-    protected function build()
+    protected function build(): void
     {
         $this->logEntries();
     }
 
-    protected function logEntries()
+    protected function logEntries(): void
     {
         $articleLogEntries = DAOFactory::get()->getDAO('articleEventLog')
             ->getArticleLogEntries($this->article->getId())->toArray();
@@ -90,6 +90,11 @@ class History
         }
     }
 
+    /**
+     * @param mixed $articleLogEntry
+     *
+     * @psalm-param T $articleLogEntry
+     */
     protected function getAssociatedObject($articleLogEntry)
     {
         switch ($articleLogEntry->getAssocType()) {
@@ -118,7 +123,10 @@ class History
         return null;
     }
 
-    protected function append($event)
+    /**
+     * @psalm-param object{articleLogEntry:mixed, associatedObject:mixed} $event
+     */
+    protected function append(object $event): void
     {
         $this->events[] = $event;
     }

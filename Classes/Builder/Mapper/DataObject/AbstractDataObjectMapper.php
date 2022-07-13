@@ -116,7 +116,7 @@ class AbstractDataObjectMapper
      * @param $onError The value to return if there's an error, defaults to except via cheap mechanism
      * @throws
      */
-    protected static function getFieldValue($key, $object, $onError = self::ON_ERROR_TRIGGER_EXCEPTION)
+    protected static function getFieldValue(string $key, $object, $onError = self::ON_ERROR_TRIGGER_EXCEPTION)
     {
         $currentValue = $object;
         $fieldNameParts = explode('.', $key);
@@ -143,10 +143,13 @@ class AbstractDataObjectMapper
 
     /**
      * Returns true if we should show the specified field in the specified context
+     *
      * @param $context
      * @param $field
+     *
+     * @return bool|null
      */
-    protected static function includeFieldInContext($context, $field)
+    protected static function includeFieldInContext($context, string $field)
     {
         $mergedContexts = array_merge(self::$sharedContexts, static::$contexts);
         if (array_key_exists($context, $mergedContexts)) {
@@ -182,10 +185,14 @@ class AbstractDataObjectMapper
 
     /**
      * Use this on the mapper objects to transform the data after the mapping
+     *
      * @param $out
      * @param $dataObject
+     * @param (bool|mixed|null|string)[] $out
+     *
+     * @psalm-param array<array-key|mixed, bool|mixed|null|string> $out
      */
-    protected static function postMap($out, $dataObject, $context)
+    protected static function postMap(array $out, $dataObject, $context)
     {
         return $out;
     }
@@ -194,7 +201,7 @@ class AbstractDataObjectMapper
      * @param $model
      * @return string
      */
-    protected static function getSourceRecordKey($model, $theirs = 'id')
+    protected static function getSourceRecordKey($model, string $theirs = 'id')
     {
         if (get_class($model) === 'stdClass') {
             list($class, $id) = [$model->__mapperClass, $model->$theirs];
@@ -211,7 +218,7 @@ class AbstractDataObjectMapper
      * @return bool|mixed|string
      * @throws \Exception
      */
-    protected static function applyFilter($filter, $value)
+    protected static function applyFilter(string $filter, $value)
     {
         if ($filter === 'boolean') {
             return static::applyBooleanFilter($value);
@@ -253,9 +260,8 @@ class AbstractDataObjectMapper
 
     /**
      * @param $value
-     * @return bool
      */
-    protected static function applyIntegerFilter($value)
+    protected static function applyIntegerFilter($value): int
     {
         return (int)$value;
     }

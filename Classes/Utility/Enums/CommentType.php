@@ -18,10 +18,12 @@ class CommentType
 
     /**
      * Turn a comment type integer into a label
+     *
      * @param $route
-     * @return string
+     *
+     * @return null|string
      */
-    static public function getCommentTypeName($commentTypeId)
+    static public function getCommentTypeName($commentTypeId): ?string
     {
         return @self::$mapping[$commentTypeId] ?: null;
     }

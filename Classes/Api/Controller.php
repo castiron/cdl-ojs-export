@@ -24,7 +24,7 @@ class Controller
     }
 
     /**
-     *
+     * @return Response|array
      */
     public function execute()
     {
@@ -60,13 +60,16 @@ class Controller
 
     /**
      * Call API method, catch exceptions
+     *
      * @param $route
      * @param $class
      * @param $routeParameters
      * @param array $arguments
-     * @return array
+     * @param string[] $routeParameters
+     *
+     * @psalm-param array<string> $routeParameters
      */
-    private function callRouteHandler($route, $class, $routeParameters, $arguments = [])
+    private function callRouteHandler($route, $class, array $routeParameters, $arguments = []): Response
     {
         $parameters = $this->zipArgs($routeParameters, Regex::getRegexNamedMatches($route));
 
@@ -113,7 +116,7 @@ class Controller
      * @param $argumentsString
      * @return array
      */
-    private function parseArguments($argumentsString)
+    private function parseArguments(string $argumentsString)
     {
         $decodedArgumentsString = urldecode($argumentsString);
 

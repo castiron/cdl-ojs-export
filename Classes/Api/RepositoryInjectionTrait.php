@@ -8,10 +8,7 @@ namespace JournalTransporterPlugin\Api;
  */
 trait RepositoryInjectionTrait
 {
-    /**
-     *
-     */
-    protected function injectRepositories()
+    protected function injectRepositories(): void
     {
         foreach (array_keys(get_class_vars(get_class($this))) as $attribute) {
             $matches = [];
